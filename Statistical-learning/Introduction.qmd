@@ -12,3 +12,14 @@ editor: visual
 ---
 
 ## Introduction
+
+This section seeks to showcase my coursework for Statistical Learning with R taught by Professor Kwong Koon Shing at SMU. This course aims at introducing the concepts of statistical methodologies for searching analytical solutions to problems related in business with the practical use of big data. Topics include R-programming, Statistical Modelling, Linear Regression, Resampling Methods, Linear Model Selection and Regularization, Tree-based methods and Unsupervised Learning.
+
+## Assignments showcased
+
+In this website, I will showcase my group project work under this course. As part of the project, students were instructed to create and evaluate 2 regression models for resale HDB prices in Singapore.
+
+1.  A Explanatory Model
+2.  A Predictive Model
+
+The specific methodologies used to construct these regressions are showcased in the following 2 tabs in this section. 
