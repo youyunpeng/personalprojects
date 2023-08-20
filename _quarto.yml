@@ -4,10 +4,33 @@ project:
 website:
   title: "personalprojects"
   navbar:
-    left:
-      - href: index.qmd
-        text: Home
-      - about.qmd
+    left: 
+    - text: "Geospatial Analytics"
+      menu: 
+        - text: "Introduction"
+          href: "Geospatial/Introduction.html"
+        - text: "Spatial Point Pattern Analysis"
+          href: "Geospatial/Take-home_Ex01/Take-home_Ex01.html"
+        - text: "Exploratory Spatial Data Analysis"
+          href: "Geospatial/Take-home_Ex02/Take-home_Ex02.html"
+        - text: "Geographically Weighted Regression"
+          href: "Geospatial/Take-home_Ex03/Take-home_Ex03.html"
+    - text: "Statistical Learning with R"
+      menu: 
+        - text: "Introduction"
+          href: "Statistical-learning/Introduction.html"
+        - text: "Explanatory Regression Model"
+          href: "Statistical-learning/project/Stat-learning-1.html"
+        - text: "Predictive Regression Model"
+          href: "Statistical-learning/project/Stat-learning-2.html"
+    - text: "Text-analytics"
+      menu: 
+        - text: "Introduction"
+          href: "Text-analytics/Intro-to-text-analytics/Intro-to-text-analytics.html"
+    right:
+        - href: index.qmd
+          text: Home
+        - about.qmd
 
 format:
   html:

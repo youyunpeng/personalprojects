@@ -1,0 +1,239 @@
+---
+title: "Predictive Model for HDB Resale Prices"
+date: "10 August 2023"
+date-modified: "`r Sys.Date()`"
+number-sections: true
+format: html
+execute: 
+  echo: true
+  eval: true
+  warning: false
+editor: visual
+---
+# Project Outline
+
+In this project, we were given data on resale prices of 5 room HDB flats in Punggol. The project task was to create the best predictive regression that can best explain variation in prices. The independent regressors and dependent variable in the regression are as such:
+
++--------------------+---------------------------+
+| Dependent Variable | Independent regressors    |
++====================+===========================+
+| Resale price       | Date of sale              |
+|                    |                           |
+|                    | Type of room              |
+|                    |                           |
+|                    | Block number              |
+|                    |                           |
+|                    | Street                    |
+|                    |                           |
+|                    | Story                     |
+|                    |                           |
+|                    | Area                      |
+|                    |                           |
+|                    | Model                     |
+|                    |                           |
+|                    | Lease Begin Date          |
+|                    |                           |
+|                    | Amount of Lease Remaining |
++--------------------+---------------------------+
+
+## Methodology
+### Summary
+We used 2 approaches – Linear Regression and Decision Trees – to develop and test different models. We selected our predictors using the best subset selection method and extended our model to include polynomials and interaction effects. We use the cross-validation method to estimate the test errors. The model using random forest method gives the smallest estimated test error and is chosen as our final recommended model.
+
+### Exploratory Data Analysis
+We created a pair plot of the dataset to identify non-linear relationships between the response variable and the predictors. However, there does not appear to be any identifiable relationship between them.
+
+### Subset Selection
+We use the best subset selection and exhaustive search method to identify the predictors that we should use for our models. The output suggests that all the variables should be included in the prediction model.
+
+### Cross-Validation of Linear Regression Model
+We extended our analysis to include polynomials and interaction effects and use the 10-fold cross-validation method to estimate test error. We observe that there is an improved model for which the test error is minimized.
+
+### Tuning of Linear Regression Model
+We further finetuned our linear regression model by using the Ridge Regression and Lasso Regression regularization method. The Lasso Regression improves upon the Ridge Regression and provides a lower test error.
+
+### Decision Tree
+We proceeded to determine if a Decision Tree approach would give better predictive capabilities. We opted to focus on the Bagging and Random Forest methods as they offer better predictive power as compared to a single tree. Based on the results of the subset selection, we used all variables for the regression tree. The Random Forest method improves upon both the Bagging and Linear Regression models and provides the smallest estimated test error.
+
+### Final Model Test Error
+We retrain the Random Forest method using the full training data set (Rm5HDB2023P.csv) and test for the mean squared error using the test data set (Rm5HDB2023testP.csv). We obtain a final mean squared error of 2363533420.
+
+## Reading data
+```{r}
+data<-read.csv("data/Rm5HDB2023P.csv", stringsAsFactors = TRUE)
+
+library(tree)
+attach(data)
+head(data)
+
+data <- na.omit(data) #remove NA values
+dim(data) #tells you how many of the datapoints are left after removing na rows
+sum(is.na(data)) #Check if there is still any NA values
+attach(data)
+pairs(data)
+```
+
+## Defining data
+```{r}
+train<-sample(1:nrow(data), nrow(data)/2)
+test<--train
+```
+
+## Subset selection and Cross validation methods
+```{r}
+library(leaps)
+library(boot)
+```
+
+## k-folds CV original variables
+```{r}
+predict.regsubsets <- function(object, newdata, id) {
+  form <- as.formula(object$call[[2]])
+  mat <- model.matrix(form, newdata)
+  coefi <- coef(object, id = id)
+  xvars <- names(coefi)
+  mat[, xvars] %*% coefi
+} #function to predict the regsubset with the lowest MSE
+
+k <- 10
+set.seed(6789)
+folds <- sample(1:k, nrow(data), replace = TRUE)
+cv.errors <- matrix(NA, k, 36, dimnames = list(NULL, paste(1:36)))
+for (j in 1:k){
+  best.fit <- regsubsets(Price ~ ., data = data[folds != j,], nvmax = 36) #Function for performing cross validation @ the j fold
+  for (i in 1:36) {
+    pred <- predict.regsubsets(best.fit, data[folds ==j,], id = i) 
+    cv.errors[j, i] <- mean((data$Price[folds ==j] - pred)^2) #Function for making prediction for computing the MSE
+  }
+}
+mean.cv <- apply(cv.errors, 2, mean) #apply function averages over the columns of the matrix 
+aa <- which.min(mean.cv) 
+aa #finds which regression model has the lowest MSE
+mean.cv[aa]
+```
+CV error=3446954895 
+
+## k-folds CV poly variables
+```{r}
+k <- 10
+set.seed(6789)
+folds <- sample(1:k, nrow(data), replace = TRUE)
+cv.errors <- matrix(NA, k, 38, dimnames = list(NULL, paste(1:38)))
+for (j in 1:k){
+  best.fit <- regsubsets(Price ~ . + I(Area^2) + I(LeaseRem^2), data = data[folds != j,], nvmax = 38) #Function for performing cross validation @ the j fold
+  for (i in 1:38) {
+    pred <- predict.regsubsets(best.fit, data[folds ==j,], id = i) 
+    cv.errors[j, i] <- mean((data$Price[folds ==j] - pred)^2) #Function for making prediction for computing the MSE
+  }
+}
+mean.cv <- apply(cv.errors, 2, mean) #apply function averages over the columns of the matrix 
+bb <- which.min(mean.cv) 
+bb #finds which regression model has the lowest MSE
+mean.cv[bb]
+```
+cv error: 3376920291 (reduced from previously)
+
+## Choosing interaction terms
+```{r}
+ss2 <- glm(Price ~ . + I(Area^2) + I(LeaseRem^2), data = data)
+cv.err2 <- cv.glm(data, ss2, K = 10)
+cv.err2$delta[1]
+
+ss3 <- glm(Price ~ . + I(Area^2) + I(LeaseRem^2) + Area:Model, data = data)
+cv.err3 <- cv.glm(data, ss3, K = 10)
+cv.err3$delta[1]
+
+ss4 <- glm(Price ~ . + I(Area^2) + I(LeaseRem^2) + Area:Model + Area:Town, data = data)
+cv.err4 <- cv.glm(data, ss4, K = 10)
+cv.err4$delta[1]
+
+ss5 <- glm(Price ~ . + I(Area^2) + I(LeaseRem^2) + Area:Model + Area:Town + Area:Story, data = data)
+cv.err5 <- cv.glm(data, ss5, K = 10)
+cv.err5$delta[1]
+
+ss6 <- glm(Price ~ . + I(Area^2) + I(LeaseRem^2) + Area:Model + Area:Town + Town:LeaseRem, data = data)
+cv.err6 <- cv.glm(data, ss6, K = 10)
+cv.err6$delta[1]
+
+ss7 <- glm(Price ~ . + I(Area^2) + I(LeaseRem^2) + Area:Model + Area:Town + LeaseRem:Town + LeaseRem:Model, data = data)
+cv.err7 <- cv.glm(data, ss7, K = 10)
+cv.err7$delta[1]
+
+ss8 <- glm(Price ~ . + I(Area^2) + I(LeaseRem^2) + Area:Model + Area:Town + LeaseRem:Town + LeaseRem:Model + LeaseRem:Story, data = data)
+cv.err8 <- cv.glm(data, ss8, K = 10)
+cv.err8$delta[1]
+
+ss9 <- glm(Price ~ . + I(Area^2) + I(LeaseRem^2) + Area:Model + Area:Town + LeaseRem:Town + LeaseRem:Model + LeaseRem:Area, data = data)
+cv.err9 <- cv.glm(data, ss9, K = 10)
+cv.err9$delta[1]
+```
+
+Ridge Regression
+```{r}
+library(glmnet)
+
+train<-sample(1:nrow(data), nrow(data)/2)
+test<--train
+
+x.train<-model.matrix(Price ~ . + I(Area^2) + I(LeaseRem^2) + Area:Model + Area:Town + LeaseRem:Town + LeaseRem:Model + LeaseRem:Area, data=data[train,])[,-6]
+y.train<-data[train,]$Price
+
+x.test<-model.matrix(Price ~ . + I(Area^2) + I(LeaseRem^2) + Area:Model + Area:Town + LeaseRem:Town + LeaseRem:Model + LeaseRem:Area, data=data[test,])[,-6]
+y.test<-data[test,]$Price
+
+cv.rr <- cv.glmnet(x.train, y.train, alpha=0)
+plot(cv.rr)
+bestlam <- cv.rr$lambda.min
+
+ridge.mod <- glmnet(x.train, y.train, alpha=0)
+
+ridge.pred <- predict(ridge.mod, s=bestlam, newx=x.test) 
+mean((ridge.pred-y.test)^2) #calc training error
+```
+test mse=3130423699
+
+Lasso regression
+```{r}
+cv.lasso <- cv.glmnet(x.train, y.train, alpha=1)
+plot(cv.lasso)
+bestlam <- cv.lasso$lambda.min
+
+lasso.mod <- glmnet(x.train, y.train, alpha=1)
+
+lasso.pred <- predict(lasso.mod, s=bestlam, newx=x.test) 
+mean((lasso.pred-y.test)^2) #calc training error
+```
+test mse=2641542810
+
+
+## Tree method
+```{r}
+RNGkind(sample.kind="Rounding")
+set.seed(6789)
+
+tree.price <- tree(Price~., data[train,])
+summary(tree.price)
+plot(tree.price)
+title(main="Classification tree for price data")
+text(tree.price, pretty=0)
+
+yhat<-predict(tree.price, newdata=data[test,])
+mean((yhat-data[test,]$Price)^2)
+```
+Test mse:  4552948559
+
+## Pruning tree
+```{r}
+# pruning tree using cross validation
+cv.price <- cv.tree(tree.price)  # use the cv.tree function to prune the tree.boston
+cv.price
+
+# Plot size against error
+plot(cv.price$size, cv.price$dev, type="b", main="Cross validation: Deviance versus Size",
+     xlab="Number of terminal nodes", ylab="deviance") 
+# from plot, we see the relationship between nodes and deviation
+
+nn <- cv.price$size[which.min(cv.price$dev)]  # identify the optimal number of nodes 
+nn
+# in this case using cv does not reccommend any changes
+```

@@ -1,0 +1,308 @@
+---
+title: "Explanatory Model for HDB Resale Prices"
+date: "10 August 2023"
+date-modified: "`r Sys.Date()`"
+number-sections: true
+format: html
+execute: 
+  echo: true
+  eval: true
+  warning: false
+editor: visual
+---
+
+# Project Outline
+
+In this project, we were given data on resale prices of HDB flats in Punggol. The project task was to create the best explanatory regression that can best explain variation in prices. The independent regressors and dependent variable in the regression are as such:
+
++--------------------+---------------------------+
+| Dependent Variable | Independent regressors    |
++====================+===========================+
+| Resale price       | Date of sale              |
+|                    |                           |
+|                    | Type of room              |
+|                    |                           |
+|                    | Block number              |
+|                    |                           |
+|                    | Street                    |
+|                    |                           |
+|                    | Story                     |
+|                    |                           |
+|                    | Area                      |
+|                    |                           |
+|                    | Model                     |
+|                    |                           |
+|                    | Lease Begin Date          |
+|                    |                           |
+|                    | Amount of Lease Remaining |
++--------------------+---------------------------+
+
+## Methodology
+### Summary
+We first conducted an analysis on the independent variable’s relationship with all dependent variable through a simple plot diagram. This allowed us to identify the class and magnitude of the variables that required data transformation. Following which, we did a pairs analysis of the independent variables to identify variables which have multicollinearity issues. Simple linear regression between the independent variables that showed relationship was done to confirm multicollinearity. Subsequently, individual regression between the dependent variable and multicollinear variables was performed to eliminate one of the 2 variables. Criteria for variable selection were statistical significance of the coefficients and their corresponding 𝑅2 value.
+
+### Data Wrangling
+The data was cleaned and tidied to remove outliers and unnecessary levels, and to fit the variables into the appropriate data types.
+Elimination of Potentially Severe Multicollinearity
+Based on domain knowledge, we determined that a few variables were likely to exhibit severe multicollinearity issues. We verified these by conducting regression analysis and VIF analysis. We opted to drop the variables with weaker explanatory power to eliminate the problem of severe multicollinearity.
+
+### Regression Modeling
+We individually regress all selected independent variables against ResalePrice and discover that most categories are significant at the 1% level. This results in our preliminary model, M1. We then seek to improve this base case by considering higher order and interaction effects.
+
+### Higher Order Effects and Interaction Terms
+In a preliminary assessment of the relationship between residuals and variables, we suspected potential heteroskedasticity of the numeric variable Area. Hence, we investigated if there were higher order effects present. However, we did not find any significant relationship from higher order effects of the variable Area.
+
+To determine the interaction effects between independent variables, we first considered the relationships between Area and LeaseBegin against other variables based on domain knowledge. We conducted the search for interaction effects of Area and LeaseBegin on other variables by running marginally improved regressions and comparing with the best model on hand, mimicking a forward stepwise subset selection method. Our results show that the interaction of Area with LeaseBegin and Model, and interaction of LeaseBegin and Model provided the greatest decrease in BIC from our preliminary model. We then obtain our final regression model, inclusive of the relevant independent variables and interaction effects as mentioned.
+
+### Assumption Checking and Residual Analysis
+To check the validity of the regression model, we conducted a goodness-of-fit test on the residuals and conducted a residual analysis by plotting out the residuals against the variables used in the regression model. This was a preliminary test to check if any of the normality assumptions were violated. We proceeded to perform the Kolmogorov-Smimov (KS) test at 1% level of significance to confirm the normality of regression residuals.
+
+The code chunk used in the project is listed below
+
+# Installation of Packages Required
+
+```{r}
+library(dplyr)
+library(tidyr)
+library(lubridate)
+library(fitdistrplus)
+library(olsrr)
+```
+
+
+# Exploratory Data Analysis
+
+```{r}
+Punggol <- read.csv("data/Punggol2023P.csv", stringsAsFactors = TRUE)
+summary(Punggol)
+head(Punggol, 5)
+```
+
+# Finding relationships amongst regressors
+
+```{r}
+attach(Punggol)
+plot(Date, ResalePrice, xlab = "Date", ylab = "ResalePrice", main = "Relationship between ResalePrice and Date")
+plot(Type, ResalePrice, xlab = "Type", ylab = "ResalePrice", main = "Relationship between ResalePrice and Type")
+plot(Block, ResalePrice, xlab = "Block", ylab = "ResalePrice", main = "Relationship between ResalePrice and Block")
+plot(Street, ResalePrice, xlab = "Street", ylab = "ResalePrice", main = "Relationship between ResalePrice and Street")
+plot(Story, ResalePrice, xlab = "Story", ylab = "ResalePrice", main = "Relationship between ResalePrice and Story")
+plot(Area, ResalePrice, xlab = "Area", ylab = "ResalePrice", main = "Relationship between ResalePrice and Area")
+plot(Model, ResalePrice, xlab = "Model", ylab = "ResalePrice", main = "Relationship between ResalePrice and Model")
+plot(LeaseBegin, ResalePrice, xlab = "LeaseBegin", ylab = "ResalePrice", main = "Relationship between ResalePrice and LeaseBegin")
+plot(LeaseRemain, ResalePrice, xlab = "LeaseRemain", ylab = "ResalePrice", main = "Relationship between ResalePrice and LeaseRemain")
+```
+
+# Data Wrangling
+
+```{r}
+working_data <- Punggol |> 
+  filter(Model != "Premium Apartment Loft") |> # Remove single observation for Premium Apartment Loft
+  mutate(Date = as.integer(month(ym(Date))),
+         LeaseRemain = time_length(as.period(as.character(LeaseRemain)), unit = "month"), # Convert LeaseRemain to numeric
+         Block = as.character(Block)) |> 
+  mutate(Block = as.integer(substr(Block, 1, 3))) |> 
+  mutate(Cluster = cut(Block, c(100, 200, 300, 400, 500, 600, 700))) |>  # Clustering of Blocks by 100s
+  droplevels()
+
+attach(working_data)
+summary(working_data)
+head(working_data, 5)
+
+plot(LeaseBegin, ResalePrice, xlab = "LeaseBegin", ylab = "ResalePrice", main = "Relationship between ResalePrice and LeaseBegin")
+plot(LeaseRemain, ResalePrice, xlab = "LeaseRemain", ylab = "ResalePrice", main = "Relationship between ResalePrice and LeaseRemain")
+plot(Cluster, ResalePrice, xlab = "Cluster", ylab = "ResalePrice", main = "Relationship between ResalePrice and Cluster")
+
+pairs(working_data[-ResalePrice])
+```
+
+# Eliminating multicollinearity - Type vs Area
+
+```{r}
+# Identifying independent variables which are highly correlated
+plot(Type, Area, xlab = "Type", ylab = "Area", main = "Relationship between Area and Type")
+typearea_test1 <- lm(Area ~ Type, data = working_data)
+summary(typearea_test1) # R^2 is almost 1
+
+# Picking a better regressor
+typearea_test2 <- lm(ResalePrice ~ Type, data = working_data)
+typearea_test3 <- lm(ResalePrice ~ Area, data = working_data) # Area has a better R^2
+typearea_test4 <- lm(ResalePrice ~ Type + Area, data = working_data) # Coefficients of Type become negative, which doesn't make sense, standard errors of Type worsened by a factor of 5
+summary(typearea_test2)
+summary(typearea_test3)
+summary(typearea_test4)
+
+ols_vif_tol(typearea_test4) # VIF confirms severe multicollinearity between the two regressors
+```
+
+# Eliminating multicollinearity - Model vs Area
+
+```{r}
+# Identifying independent variables which are highly correlated
+plot(Model, Area, xlab = "Model", ylab = "Area", main = "Relationship between Area and Model")
+modelarea_test1 <- lm(Area ~ Model, data = working_data)
+summary(modelarea_test1)
+
+# Picking a better regressor
+modelarea_test2 <- lm(ResalePrice ~ Model, data = working_data)
+modelarea_test3 <- lm(ResalePrice ~ Area, data = working_data) # Area has a better R^2
+modelarea_test4 <- lm(ResalePrice ~ Model + Area, data = working_data) 
+summary(modelarea_test2)
+summary(modelarea_test3)
+summary(modelarea_test4)
+
+ols_vif_tol(modelarea_test4) # VIF does not confirm severe multicollinearity between the two regressors, we should use both
+```
+
+# Eliminating multicollinearity - Street vs Cluster
+
+```{r}
+# Identifying independent variables which are highly correlated
+streetcluster_test1 <- lm(ResalePrice ~ Street, data = working_data)
+streetcluster_test2 <- lm(ResalePrice ~ Cluster, data = working_data) # Cluster has a better R^2
+streetcluster_test3 <- lm(ResalePrice ~ Cluster + Street, data = working_data)
+summary(streetcluster_test1)
+summary(streetcluster_test2)
+summary(streetcluster_test3)
+
+ols_vif_tol(streetcluster_test3) # VIF does not confirm severe multicollinearity between the two regressors, we should use both
+```
+
+# Eliminating multicollinearity - LeaseBegin vs LeaseRemain
+
+```{r}
+# Identifying independent variables which are highly correlated
+plot(LeaseBegin, LeaseRemain, xlab = "LeaseBegin", ylab = "LeaseRemain", main = "Relationship between LeaseRemain and LeaseBegin")
+lease_test1 <- lm(LeaseRemain ~ LeaseBegin, data = working_data)
+summary(lease_test1) # R^2 is almost 1
+
+lease_test2 <- lm(ResalePrice ~ LeaseBegin, data = working_data) # LeaseBegin has a better R^2
+lease_test3 <- lm(ResalePrice ~ LeaseRemain, data = working_data)
+lease_test4 <- lm(ResalePrice ~ LeaseBegin + LeaseRemain, data = working_data)
+
+summary(lease_test2)
+summary(lease_test3)
+summary(lease_test4)
+
+ols_vif_tol(lease_test4) # VIF confirms severe multicollinearity between the two regressors
+```
+
+# Identifying significant regressors
+
+```{r}
+date_test1 <- lm(ResalePrice ~ Date, data = working_data)
+summary(date_test1) # Most months are significant at the 1% level, but low explanatory power
+
+model_test1 <- lm(ResalePrice ~ Model, data = working_data)
+summary(model_test1) # Both models are significant at the 1% level, but low explanatory power
+
+story_test1 <- lm(ResalePrice ~ Story, data = working_data)
+summary(story_test1) # Most stories are significant at the 1% level, but low explanatory power
+
+area_test1 <- lm(ResalePrice ~ Area, data = working_data)
+summary(area_test1) # Area is significant at the 1% level, with decent explanatory power
+
+cluster_test1 <- lm(ResalePrice ~ Cluster, data = working_data)
+summary(cluster_test1) # All clusters are significant at the 1% level, but low explanatory power
+
+leasebegin_test1 <- lm(ResalePrice ~ LeaseBegin, data = working_data)
+summary(leasebegin_test1) # Most lease dates are significant at the 1% level, but low explanatory power
+```
+
+# Preliminary Model, Non-linear Models and Interaction Terms
+
+```{r}
+# Multiple Regression
+reg_all <- lm(ResalePrice ~ ., data = working_data)
+ols_vif_tol(reg_all) # Checking for severe multicollinearity
+
+M1 <- lm(ResalePrice ~ LeaseBegin + Story + Area + Model + Date + Street + Cluster, data = working_data)
+ols_vif_tol(M1) # Checking for severe multicollinearity
+```
+
+```{r}
+# Polynomial
+M1_norm1 <- fitdist(resid(M1), distr = "norm")
+plot(M1_norm1)
+plot(Area, resid(M1), xlab = "Area", ylab = "Residuals", main = "Relationship between Residuals (M1) and Area")
+
+poly_data <- working_data |> 
+  mutate(AreaRoot = Area^0.5)
+
+root <- lm(ResalePrice ~ AreaRoot + LeaseBegin + Story + Model + Date + Street + Cluster, data = poly_data)
+square <- lm(ResalePrice ~ Area + I(Area)^2 + LeaseBegin + Story + Model + Date + Street + Cluster, data = poly_data)
+
+poly_BIC <- c(BIC(M1), BIC(root), BIC(square))
+plot(poly_BIC,  type = "b")
+which.min(poly_BIC)
+```
+
+```{r}
+# Determination of interaction terms based on relationship between Area and other variables
+plot(LeaseBegin, Area, xlab = "LeaseBegin", ylab = "Area", main = "Relationship between Area and LeaseBegin")
+plot(Model, Area, xlab = "Model", ylab = "Area", main = "Relationship between Area and Model")
+plot(Cluster, Area, xlab = "Cluster", ylab = "Area", main = "Relationship between Area and Cluster")
+plot(Street, Area, xlab = "Street", ylab = "Area", main = "Relationship between Area and Street")
+
+IE_1 <- lm(ResalePrice ~ Area * LeaseBegin + Story + Model + Date + Street + Cluster, data = working_data)
+IE_2 <- lm(ResalePrice ~ Area + LeaseBegin + Story + Area * Model + Date + Street + Cluster, data = working_data)
+IE_3 <- lm(ResalePrice ~ Area + LeaseBegin + Story + Area + Date + Area * Street + Cluster, data = working_data)
+IE_4 <- lm(ResalePrice ~ Area + LeaseBegin + Story + Area + Date + Street + Area * Cluster, data = working_data)
+
+IE_BIC <- c(BIC(M1), BIC(IE_1), BIC(IE_2), BIC(IE_3), BIC(IE_4))
+IE_BIC
+plot(IE_BIC, type = "b")
+which.min(IE_BIC)
+
+IE_5 <- lm(ResalePrice ~ Area * LeaseBegin + Story + Area * Model + Date + Street + Cluster, data = working_data)
+IE_BIC <- c(BIC(M1), BIC(IE_1), BIC(IE_2), BIC(IE_5))
+IE_BIC
+
+plot(IE_BIC, type = "b")
+which.min(IE_BIC)
+```
+
+```{r}
+# Determination of interaction terms based on relationship between LeaseBegin and other variables
+IE_6 <- lm(ResalePrice ~ Area * LeaseBegin + Story + Area * Model + Date + Street + LeaseBegin * Cluster, data = working_data)
+IE_7 <- lm(ResalePrice ~ Area * LeaseBegin + Story + Area * Model + Date + Street + Cluster + LeaseBegin * Model, data = working_data)
+
+IE_BIC <- c(BIC(IE_5), BIC(IE_6), BIC(IE_7))
+plot(IE_BIC, type = "b")
+which.min(IE_BIC)
+```
+
+# Final model
+
+```{r}
+final_model <- IE_7
+final_model_summary <- summary(final_model)
+final_model_summary
+BIC(final_model)
+length(final_model$coefficients)
+
+library(gtsummary)
+tbl_regression(final_model, 
+               intercept = TRUE) %>% 
+  add_glance_source_note(
+    label = list(sigma ~ "\U03C3"),
+    include = c(r.squared, adj.r.squared, 
+                AIC, statistic,
+                p.value, sigma))
+```
+
+# Model Assumptions
+
+```{r}
+final_model_norm1 <- fitdist(resid(final_model), distr = "norm")
+plot(final_model_norm1)
+
+plot(final_model$fitted.values, resid(final_model), xlab = "Predicted ResalePrice", ylab = "Residuals", main = "Relationship between Residuals and Predicted ResalePrice")
+plot(Area, resid(final_model), xlab = "Area", ylab = "Residuals", main = "Relationship between Residuals and Area")
+plot(LeaseBegin, resid(final_model), xlab = "LeaseBegin", ylab = "Residuals", main = "Relationship between Residuals and LeaseBegin")
+plot(Story, resid(final_model), xlab = "Story", ylab = "Residuals", main = "Relationship between Residuals and Story")
+plot(Model, resid(final_model), xlab = "Model", ylab = "Residuals", main = "Relationship between Residuals and Model")
+plot(Date, resid(final_model), xlab = "Date", ylab = "Residuals", main = "Relationship between Residuals and Date")
+plot(Street, resid(final_model), xlab = "Street", ylab = "Residuals", main = "Relationship between Residuals and Street")
+plot(Cluster, resid(final_model), xlab = "Cluster", ylab = "Residuals", main = "Relationship between Residuals and Cluster")
+```

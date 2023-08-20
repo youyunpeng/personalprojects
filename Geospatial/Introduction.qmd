@@ -1,0 +1,34 @@
+---
+title: "Introduction - Geospatial Analytics"
+date: "18 August 2023"
+date-modified: "`r Sys.Date()`"
+number-sections: true
+format: html
+execute: 
+  echo: true
+  eval: true
+  warning: false
+editor: visual
+---
+
+## Introduction
+
+This section seeks to showcase my coursework for Geospatial Analytics taught by Professor Kam Tin Seong at SMU. This course provides students with an introduction to the concepts, principles and methods of geospatial analytics and their practical applications of geospatial analytics in real world operations. Emphasis will be placed on
+
+-   performing geospatial data science tasks such as importing, tidying, manipulating, transforming, projecting and processing geospatial data programmatically,
+
+-   visualising, analysing and describing geographical patterns and process using appropriate geovisualisation and thematic mapping techniques,
+
+-   Conducting geospatial analysis by using appropriate spatial statistics and machine learning methods and
+
+-   building web-based geospatial analytics applications.
+
+## Assignments showcased
+
+In this website, I will showcase my attempts on the take-home assignments in the course. The problem statements answered are as follows:
+
+1.  How can we analyse geographical distributions of point data? Analysis using spatial point pattern and data on waterpoints in Osun state, Nigeria.
+2.  How can we uncover the spatio-temporal trends of vaccination (i.e. clustering of data points) using exploratory spatial data analysis? Anaylsis using Covid-19 vaccination in DKI Jarkarta.
+3.  How can we create a predictive model to predict property prices using geographically weighted methods. Analysis using Geographically weighted regression on HDB resale prices in Singapore.
+
+Feel free to explore these projects by toggling to the respective tabs!

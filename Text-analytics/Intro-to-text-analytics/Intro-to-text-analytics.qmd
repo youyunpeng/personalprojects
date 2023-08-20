@@ -1,0 +1,165 @@
+---
+title: "Introduction"
+date: "10 August 2023"
+date-modified: "`r Sys.Date()`"
+number-sections: true
+format: html
+execute: 
+  echo: true
+  eval: true
+  warning: false
+editor: visual
+---
+
+# Background
+
+In exploring more about text mining and text analytics, we reference the website [Text Mining with R](https://www.tidytextmining.com/) by Julia Silge and David Robinson, and highlight some key learning points from the textbook. Thereafter, we apply some of the learnings in the following self initiated projects.
+
+# Tidy Text Format
+
+As described by Hadley Wickham, tidy data has a specific structure:
+
+-   Each variable is a column
+
+-   Each observation is a row
+
+-   Each type of observational unit is a table
+
+In the context of text, we define the tidy format as being a table with one-token-per-row, where a token is a meaningful unit of text.
+
+## Unnest token function
+
+Most often, we are faced with paragraphs of words. But in analysing text, the form we want to create is in a token tidy text form. The textbook provided an example text written by Emily Dickinson:
+
+```{r}
+library(dplyr)
+
+text <- c("Because I could not stop for Death -",
+          "He kindly stopped for me -",
+          "The Carriage held but just Ourselves -",
+          "and Immortality")
+text_df<-tibble(line=1:4, text=text)
+```
+
+This is in a tibble form, which is not yet compatible with tidy text analysis. We need to convert this so that it has one-token-per-document-per-row.
+
+```{r}
+library(tidytext)
+text_df |> 
+  unnest_tokens(word, text)
+```
+
+The unnest_token() arguments are column names: i.e. output column name: word, input column that the text comes from: text.
+
+## Example: tidying the works of Jane Austen
+
+### Data wrangling
+
+The text of Jane Austen's 6 completed, published novels from the janeaustenr package (Silge 2016) was used.
+
+```{r}
+library(janeaustenr)
+library(dplyr)
+library(stringr)
+
+austen_books()
+```
+
+Using mutate(), we annotate a linenumber quantity to keep track of lines in the original format, and a chapter.
+
+```{r}
+original_books <- austen_books() |> 
+  group_by(book) |> 
+  mutate(linenumber = row_number(),
+         chapter = cumsum(str_detect(text, 
+                                     regex("^chapter [\\divxlc]",
+                                           ignore_case = TRUE)))) %>%
+  ungroup()
+
+original_books
+```
+
+To create a tidy dataset, we restructure it in the one-token-per-row format, using the unnest_tokens() function
+
+```{r}
+library(tidytext)
+tidy_books<-original_books |> 
+  unnest_tokens(word, text)
+
+tidy_books
+```
+
+Often in analysis, we want to remove stop words, which are words not useful in analysis. We can do so using anti_join()
+
+```{r}
+tidy_books<-tidy_books |> 
+  anti_join(stop_words)
+
+tidy_books
+```
+
+We see that after this code chunk, the number of rows reduced significantly (725k to 217k rows).
+
+### Data analysis
+
+1.  We can use dplyr's count() to find the most common words in all the books as a whole
+
+```{r}
+tidy_books |> 
+  count(word, sort=TRUE)
+```
+
+Some basic visualisations can be done with ggplot
+
+```{r}
+library(ggplot2)
+
+tidy_books |> 
+  count(word, sort=TRUE) |> 
+  filter(n>600) |> 
+  mutate(word=reorder(word, n)) |> 
+  ggplot(aes(n, word))+
+  geom_col()+
+  labs(y=NULL)
+```
+
+# Sentiment Analysis with Tidy Data
+
+In this section, we are referencing both the website [Text Mining with R](https://www.tidytextmining.com/), as well as [Kaggle tutorial on sentimental analysis](https://www.kaggle.com/code/rtatman/tutorial-sentiment-analysis-in-r/input) by Rachel Tatman.
+
+In this next section, we hope to learn more about sentiment analysis in R. Sentiment analysis is the computational task of automatically determining what feelings a writer is expressing in text. Approaches that analyst can take to conduct sentiment analysis includes
+
+1.  Create/find a list of words associated with strongly positive or negative sentiment
+
+2.  Count the number of positive and negative words in the text
+
+3.  Analyse the mix of positive and negative words.
+
+In the tutorial, we will analyse how the sentiment of the State of address, speech given by the President of the United States
+
+```{r}
+#load in the libraries we'll need
+library(tidyverse)
+library(tidytext)
+library(glue)
+library(stringr)
+
+files<-list.files(path="data")
+files
+```
+
+```{r}
+# stick together the path to the file & 1st file name
+
+#fileName \<- glue("data", files\[1\], sep = "") \# get rid of any sneaky trailing spaces fileName \<- trimws(fileName)
+
+# read in the new file
+
+#fileText \<- glue(read_file(fileName)) \# remove any dollar signs (they're special characters in R) fileText \<- gsub("\\\$", "", fileText)
+
+# tokenize
+
+#tokens \<- data_frame(text = fileText) %\>% unnest_tokens(word, text)
+
+```
+

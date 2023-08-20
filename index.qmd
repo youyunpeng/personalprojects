@@ -1,11 +1,27 @@
 ---
-title: "personalprojects"
+about:
+  template: jolla
+  id: about-block
+  image: profile.jpeg
+  links:
+    - icon: linkedin
+      text: linkedin
+      href: https://www.linkedin.com/in/peng-you-yun/
+    - icon: github
+      text: Github
+      href: https://github.com/youyunpeng
+    - icon: envelope
+      text: Email
+      href: "mailto:youyun.peng.2021@smu.edu.sg"  
 ---
 
-This is a Quarto website.
+::: {#about-block}
+:::
 
-To learn more about Quarto websites visit <https://quarto.org/docs/websites>.
+# Welcome to my website!
 
-```{r}
-1 + 1
-```
+I am You Yun, a penultimate Economics and Data Science undergraduate student at the Singapore Management University. This website serves to offer a glimpse into the projects I have been working on (including some coursework and personal projects).
+
+For instance, some course work I have included in the site includes my work from Geospatial Analytics and Statistical Learning with R. A separate site has been created for [Geospatial Analytics](https://youyunpeng-is415.netlify.app/) as part of the coursework, if you would like to explore further. Beyond my coursework, I am trying to work on learning other methods of analysis on my own, including text analytics and machine learning methods. Most of the data used is publicly sourced, and I invite you to try out some of the projects stated in the website along with me!
+
+Please feel free to [contact me](mailto:youyun.peng.2021@smu.edu.sg) if you have any questions or would like to discuss potential projects.

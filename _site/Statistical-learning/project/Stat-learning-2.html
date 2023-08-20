@@ -1,0 +1,719 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.1.189">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+<meta name="dcterms.date" content="2023-08-10">
+
+<title>personalprojects - Predictive Model for HDB Resale Prices</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1.6em;
+  vertical-align: middle;
+}
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #7d9029; } /* Attribute */
+code span.bn { color: #40a070; } /* BaseN */
+code span.bu { color: #008000; } /* BuiltIn */
+code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4070a0; } /* Char */
+code span.cn { color: #880000; } /* Constant */
+code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code span.dt { color: #902000; } /* DataType */
+code span.dv { color: #40a070; } /* DecVal */
+code span.er { color: #ff0000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #40a070; } /* Float */
+code span.fu { color: #06287e; } /* Function */
+code span.im { color: #008000; font-weight: bold; } /* Import */
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code span.op { color: #666666; } /* Operator */
+code span.ot { color: #007020; } /* Other */
+code span.pp { color: #bc7a00; } /* Preprocessor */
+code span.sc { color: #4070a0; } /* SpecialChar */
+code span.ss { color: #bb6688; } /* SpecialString */
+code span.st { color: #4070a0; } /* String */
+code span.va { color: #19177c; } /* Variable */
+code span.vs { color: #4070a0; } /* VerbatimString */
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+</style>
+
+
+<script src="../../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../../site_libs/quarto-nav/headroom.min.js"></script>
+<script src="../../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../../">
+<script src="../../site_libs/quarto-html/quarto.js"></script>
+<script src="../../site_libs/quarto-html/popper.min.js"></script>
+<script src="../../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../../site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="../../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../../site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "navbar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "end",
+  "type": "overlay",
+  "limit": 20,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit"
+  }
+}</script>
+
+
+<link rel="stylesheet" href="../../styles.css">
+</head>
+
+<body class="nav-fixed">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+    <nav class="navbar navbar-expand-lg navbar-dark ">
+      <div class="navbar-container container-fluid">
+      <div class="navbar-brand-container">
+    <a class="navbar-brand" href="../../index.html">
+    <span class="navbar-title">personalprojects</span>
+    </a>
+  </div>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+  <span class="navbar-toggler-icon"></span>
+</button>
+          <div class="collapse navbar-collapse" id="navbarCollapse">
+            <ul class="navbar-nav navbar-nav-scroll me-auto">
+  <li class="nav-item dropdown ">
+    <a class="nav-link dropdown-toggle" href="#" id="nav-menu-geospatial-analytics" role="button" data-bs-toggle="dropdown" aria-expanded="false">Geospatial Analytics</a>
+    <ul class="dropdown-menu" aria-labelledby="nav-menu-geospatial-analytics">    
+        <li>
+    <a class="dropdown-item" href="../../Geospatial/Introduction.html">
+ <span class="dropdown-text">Introduction</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="../../Geospatial/Take-home_Ex01/Take-home_Ex01.html">
+ <span class="dropdown-text">Spatial Point Pattern Analysis</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="../../Geospatial/Take-home_Ex02/Take-home_Ex02.html">
+ <span class="dropdown-text">Exploratory Spatial Data Analysis</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="../../Geospatial/Take-home_Ex03/Take-home_Ex03.html">
+ <span class="dropdown-text">Geographically Weighted Regression</span></a>
+  </li>  
+    </ul>
+  </li>
+  <li class="nav-item dropdown ">
+    <a class="nav-link dropdown-toggle" href="#" id="nav-menu-statistical-learning-with-r" role="button" data-bs-toggle="dropdown" aria-expanded="false">Statistical Learning with R</a>
+    <ul class="dropdown-menu" aria-labelledby="nav-menu-statistical-learning-with-r">    
+        <li>
+    <a class="dropdown-item" href="../../Statistical-learning/Introduction.html">
+ <span class="dropdown-text">Introduction</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="../../Statistical-learning/project/Stat-learning-1.html">
+ <span class="dropdown-text">Explanatory Regression Model</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="../../Statistical-learning/project/Stat-learning-2.html">
+ <span class="dropdown-text">Predictive Regression Model</span></a>
+  </li>  
+    </ul>
+  </li>
+  <li class="nav-item dropdown ">
+    <a class="nav-link dropdown-toggle" href="#" id="nav-menu-text-analytics" role="button" data-bs-toggle="dropdown" aria-expanded="false">Text-analytics</a>
+    <ul class="dropdown-menu" aria-labelledby="nav-menu-text-analytics">    
+        <li>
+    <a class="dropdown-item" href="../../Text-analytics/Intro-to-text-analytics/Intro-to-text-analytics.html">
+ <span class="dropdown-text">Intro to Text Analytics</span></a>
+  </li>  
+    </ul>
+  </li>
+</ul>
+            <ul class="navbar-nav navbar-nav-scroll ms-auto">
+  <li class="nav-item">
+    <a class="nav-link" href="../../index.html">Home</a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../../about.html">About Me</a>
+  </li>  
+</ul>
+              <div id="quarto-search" class="" title="Search"></div>
+          </div> <!-- /navcollapse -->
+      </div> <!-- /container-fluid -->
+    </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
+<!-- sidebar -->
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul>
+  <li><a href="#project-outline" id="toc-project-outline" class="nav-link active" data-scroll-target="#project-outline"><span class="toc-section-number">1</span>  Project Outline</a>
+  <ul class="collapse">
+  <li><a href="#methodology" id="toc-methodology" class="nav-link" data-scroll-target="#methodology"><span class="toc-section-number">1.1</span>  Methodology</a>
+  <ul class="collapse">
+  <li><a href="#summary" id="toc-summary" class="nav-link" data-scroll-target="#summary"><span class="toc-section-number">1.1.1</span>  Summary</a></li>
+  <li><a href="#exploratory-data-analysis" id="toc-exploratory-data-analysis" class="nav-link" data-scroll-target="#exploratory-data-analysis"><span class="toc-section-number">1.1.2</span>  Exploratory Data Analysis</a></li>
+  <li><a href="#subset-selection" id="toc-subset-selection" class="nav-link" data-scroll-target="#subset-selection"><span class="toc-section-number">1.1.3</span>  Subset Selection</a></li>
+  <li><a href="#cross-validation-of-linear-regression-model" id="toc-cross-validation-of-linear-regression-model" class="nav-link" data-scroll-target="#cross-validation-of-linear-regression-model"><span class="toc-section-number">1.1.4</span>  Cross-Validation of Linear Regression Model</a></li>
+  <li><a href="#tuning-of-linear-regression-model" id="toc-tuning-of-linear-regression-model" class="nav-link" data-scroll-target="#tuning-of-linear-regression-model"><span class="toc-section-number">1.1.5</span>  Tuning of Linear Regression Model</a></li>
+  <li><a href="#decision-tree" id="toc-decision-tree" class="nav-link" data-scroll-target="#decision-tree"><span class="toc-section-number">1.1.6</span>  Decision Tree</a></li>
+  <li><a href="#final-model-test-error" id="toc-final-model-test-error" class="nav-link" data-scroll-target="#final-model-test-error"><span class="toc-section-number">1.1.7</span>  Final Model Test Error</a></li>
+  </ul></li>
+  <li><a href="#reading-data" id="toc-reading-data" class="nav-link" data-scroll-target="#reading-data"><span class="toc-section-number">1.2</span>  Reading data</a></li>
+  <li><a href="#defining-data" id="toc-defining-data" class="nav-link" data-scroll-target="#defining-data"><span class="toc-section-number">1.3</span>  Defining data</a></li>
+  <li><a href="#subset-selection-and-cross-validation-methods" id="toc-subset-selection-and-cross-validation-methods" class="nav-link" data-scroll-target="#subset-selection-and-cross-validation-methods"><span class="toc-section-number">1.4</span>  Subset selection and Cross validation methods</a></li>
+  <li><a href="#k-folds-cv-original-variables" id="toc-k-folds-cv-original-variables" class="nav-link" data-scroll-target="#k-folds-cv-original-variables"><span class="toc-section-number">1.5</span>  k-folds CV original variables</a></li>
+  <li><a href="#k-folds-cv-poly-variables" id="toc-k-folds-cv-poly-variables" class="nav-link" data-scroll-target="#k-folds-cv-poly-variables"><span class="toc-section-number">1.6</span>  k-folds CV poly variables</a></li>
+  <li><a href="#choosing-interaction-terms" id="toc-choosing-interaction-terms" class="nav-link" data-scroll-target="#choosing-interaction-terms"><span class="toc-section-number">1.7</span>  Choosing interaction terms</a></li>
+  <li><a href="#tree-method" id="toc-tree-method" class="nav-link" data-scroll-target="#tree-method"><span class="toc-section-number">1.8</span>  Tree method</a></li>
+  <li><a href="#pruning-tree" id="toc-pruning-tree" class="nav-link" data-scroll-target="#pruning-tree"><span class="toc-section-number">1.9</span>  Pruning tree</a></li>
+  </ul></li>
+  </ul>
+</nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title">Predictive Model for HDB Resale Prices</h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    
+    <div>
+    <div class="quarto-title-meta-heading">Published</div>
+    <div class="quarto-title-meta-contents">
+      <p class="date">August 10, 2023</p>
+    </div>
+  </div>
+    
+  </div>
+  
+
+</header>
+
+<section id="project-outline" class="level1" data-number="1">
+<h1 data-number="1"><span class="header-section-number">1</span> Project Outline</h1>
+<p>In this project, we were given data on resale prices of 5 room HDB flats in Punggol. The project task was to create the best predictive regression that can best explain variation in prices. The independent regressors and dependent variable in the regression are as such:</p>
+<table class="table">
+<colgroup>
+<col style="width: 29%">
+<col style="width: 38%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Dependent Variable</th>
+<th>Independent regressors</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Resale price</td>
+<td><p>Date of sale</p>
+<p>Type of room</p>
+<p>Block number</p>
+<p>Street</p>
+<p>Story</p>
+<p>Area</p>
+<p>Model</p>
+<p>Lease Begin Date</p>
+<p>Amount of Lease Remaining</p></td>
+</tr>
+</tbody>
+</table>
+<section id="methodology" class="level2" data-number="1.1">
+<h2 data-number="1.1" class="anchored" data-anchor-id="methodology"><span class="header-section-number">1.1</span> Methodology</h2>
+<section id="summary" class="level3" data-number="1.1.1">
+<h3 data-number="1.1.1" class="anchored" data-anchor-id="summary"><span class="header-section-number">1.1.1</span> Summary</h3>
+<p>We used 2 approaches – Linear Regression and Decision Trees – to develop and test different models. We selected our predictors using the best subset selection method and extended our model to include polynomials and interaction effects. We use the cross-validation method to estimate the test errors. The model using random forest method gives the smallest estimated test error and is chosen as our final recommended model.</p>
+</section>
+<section id="exploratory-data-analysis" class="level3" data-number="1.1.2">
+<h3 data-number="1.1.2" class="anchored" data-anchor-id="exploratory-data-analysis"><span class="header-section-number">1.1.2</span> Exploratory Data Analysis</h3>
+<p>We created a pair plot of the dataset to identify non-linear relationships between the response variable and the predictors. However, there does not appear to be any identifiable relationship between them.</p>
+</section>
+<section id="subset-selection" class="level3" data-number="1.1.3">
+<h3 data-number="1.1.3" class="anchored" data-anchor-id="subset-selection"><span class="header-section-number">1.1.3</span> Subset Selection</h3>
+<p>We use the best subset selection and exhaustive search method to identify the predictors that we should use for our models. The output suggests that all the variables should be included in the prediction model.</p>
+</section>
+<section id="cross-validation-of-linear-regression-model" class="level3" data-number="1.1.4">
+<h3 data-number="1.1.4" class="anchored" data-anchor-id="cross-validation-of-linear-regression-model"><span class="header-section-number">1.1.4</span> Cross-Validation of Linear Regression Model</h3>
+<p>We extended our analysis to include polynomials and interaction effects and use the 10-fold cross-validation method to estimate test error. We observe that there is an improved model for which the test error is minimized.</p>
+</section>
+<section id="tuning-of-linear-regression-model" class="level3" data-number="1.1.5">
+<h3 data-number="1.1.5" class="anchored" data-anchor-id="tuning-of-linear-regression-model"><span class="header-section-number">1.1.5</span> Tuning of Linear Regression Model</h3>
+<p>We further finetuned our linear regression model by using the Ridge Regression and Lasso Regression regularization method. The Lasso Regression improves upon the Ridge Regression and provides a lower test error.</p>
+</section>
+<section id="decision-tree" class="level3" data-number="1.1.6">
+<h3 data-number="1.1.6" class="anchored" data-anchor-id="decision-tree"><span class="header-section-number">1.1.6</span> Decision Tree</h3>
+<p>We proceeded to determine if a Decision Tree approach would give better predictive capabilities. We opted to focus on the Bagging and Random Forest methods as they offer better predictive power as compared to a single tree. Based on the results of the subset selection, we used all variables for the regression tree. The Random Forest method improves upon both the Bagging and Linear Regression models and provides the smallest estimated test error.</p>
+</section>
+<section id="final-model-test-error" class="level3" data-number="1.1.7">
+<h3 data-number="1.1.7" class="anchored" data-anchor-id="final-model-test-error"><span class="header-section-number">1.1.7</span> Final Model Test Error</h3>
+<p>We retrain the Random Forest method using the full training data set (Rm5HDB2023P.csv) and test for the mean squared error using the test data set (Rm5HDB2023testP.csv). We obtain a final mean squared error of 2363533420.</p>
+</section>
+</section>
+<section id="reading-data" class="level2" data-number="1.2">
+<h2 data-number="1.2" class="anchored" data-anchor-id="reading-data"><span class="header-section-number">1.2</span> Reading data</h2>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>data<span class="ot">&lt;-</span><span class="fu">read.csv</span>(<span class="st">"data/Rm5HDB2023P.csv"</span>, <span class="at">stringsAsFactors =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tree)</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="fu">attach</span>(data)</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(data)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>        Town    Story Area    Model LeaseRem   Price
+1 ANG MO KIO 13 TO 15  113 Improved       95 1025000
+2 ANG MO KIO 01 TO 03  120     DBSS       88  780000
+3 ANG MO KIO  19Above  118 Improved       58  700000
+4 ANG MO KIO  19Above  135  Model A       59  860000
+5 ANG MO KIO 04 TO 06  117 Improved       57  620000
+6 ANG MO KIO 16 TO 18  118 Improved       57  700000</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>data <span class="ot">&lt;-</span> <span class="fu">na.omit</span>(data) <span class="co">#remove NA values</span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="fu">dim</span>(data) <span class="co">#tells you how many of the datapoints are left after removing na rows</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 4995    6</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="fu">sum</span>(<span class="fu">is.na</span>(data)) <span class="co">#Check if there is still any NA values</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 0</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="fu">attach</span>(data)</span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a><span class="fu">pairs</span>(data)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="Stat-learning-2_files/figure-html/unnamed-chunk-1-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+</section>
+<section id="defining-data" class="level2" data-number="1.3">
+<h2 data-number="1.3" class="anchored" data-anchor-id="defining-data"><span class="header-section-number">1.3</span> Defining data</h2>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>train<span class="ot">&lt;-</span><span class="fu">sample</span>(<span class="dv">1</span><span class="sc">:</span><span class="fu">nrow</span>(data), <span class="fu">nrow</span>(data)<span class="sc">/</span><span class="dv">2</span>)</span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>test<span class="ot">&lt;-</span><span class="sc">-</span>train</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="subset-selection-and-cross-validation-methods" class="level2" data-number="1.4">
+<h2 data-number="1.4" class="anchored" data-anchor-id="subset-selection-and-cross-validation-methods"><span class="header-section-number">1.4</span> Subset selection and Cross validation methods</h2>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(leaps)</span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(boot)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="k-folds-cv-original-variables" class="level2" data-number="1.5">
+<h2 data-number="1.5" class="anchored" data-anchor-id="k-folds-cv-original-variables"><span class="header-section-number">1.5</span> k-folds CV original variables</h2>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>predict.regsubsets <span class="ot">&lt;-</span> <span class="cf">function</span>(object, newdata, id) {</span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>  form <span class="ot">&lt;-</span> <span class="fu">as.formula</span>(object<span class="sc">$</span>call[[<span class="dv">2</span>]])</span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>  mat <span class="ot">&lt;-</span> <span class="fu">model.matrix</span>(form, newdata)</span>
+<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a>  coefi <span class="ot">&lt;-</span> <span class="fu">coef</span>(object, <span class="at">id =</span> id)</span>
+<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a>  xvars <span class="ot">&lt;-</span> <span class="fu">names</span>(coefi)</span>
+<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a>  mat[, xvars] <span class="sc">%*%</span> coefi</span>
+<span id="cb10-7"><a href="#cb10-7" aria-hidden="true" tabindex="-1"></a>} <span class="co">#function to predict the regsubset with the lowest MSE</span></span>
+<span id="cb10-8"><a href="#cb10-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-9"><a href="#cb10-9" aria-hidden="true" tabindex="-1"></a>k <span class="ot">&lt;-</span> <span class="dv">10</span></span>
+<span id="cb10-10"><a href="#cb10-10" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">6789</span>)</span>
+<span id="cb10-11"><a href="#cb10-11" aria-hidden="true" tabindex="-1"></a>folds <span class="ot">&lt;-</span> <span class="fu">sample</span>(<span class="dv">1</span><span class="sc">:</span>k, <span class="fu">nrow</span>(data), <span class="at">replace =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb10-12"><a href="#cb10-12" aria-hidden="true" tabindex="-1"></a>cv.errors <span class="ot">&lt;-</span> <span class="fu">matrix</span>(<span class="cn">NA</span>, k, <span class="dv">36</span>, <span class="at">dimnames =</span> <span class="fu">list</span>(<span class="cn">NULL</span>, <span class="fu">paste</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">36</span>)))</span>
+<span id="cb10-13"><a href="#cb10-13" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> (j <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span>k){</span>
+<span id="cb10-14"><a href="#cb10-14" aria-hidden="true" tabindex="-1"></a>  best.fit <span class="ot">&lt;-</span> <span class="fu">regsubsets</span>(Price <span class="sc">~</span> ., <span class="at">data =</span> data[folds <span class="sc">!=</span> j,], <span class="at">nvmax =</span> <span class="dv">36</span>) <span class="co">#Function for performing cross validation @ the j fold</span></span>
+<span id="cb10-15"><a href="#cb10-15" aria-hidden="true" tabindex="-1"></a>  <span class="cf">for</span> (i <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span><span class="dv">36</span>) {</span>
+<span id="cb10-16"><a href="#cb10-16" aria-hidden="true" tabindex="-1"></a>    pred <span class="ot">&lt;-</span> <span class="fu">predict.regsubsets</span>(best.fit, data[folds <span class="sc">==</span>j,], <span class="at">id =</span> i) </span>
+<span id="cb10-17"><a href="#cb10-17" aria-hidden="true" tabindex="-1"></a>    cv.errors[j, i] <span class="ot">&lt;-</span> <span class="fu">mean</span>((data<span class="sc">$</span>Price[folds <span class="sc">==</span>j] <span class="sc">-</span> pred)<span class="sc">^</span><span class="dv">2</span>) <span class="co">#Function for making prediction for computing the MSE</span></span>
+<span id="cb10-18"><a href="#cb10-18" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb10-19"><a href="#cb10-19" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb10-20"><a href="#cb10-20" aria-hidden="true" tabindex="-1"></a>mean.cv <span class="ot">&lt;-</span> <span class="fu">apply</span>(cv.errors, <span class="dv">2</span>, mean) <span class="co">#apply function averages over the columns of the matrix </span></span>
+<span id="cb10-21"><a href="#cb10-21" aria-hidden="true" tabindex="-1"></a>aa <span class="ot">&lt;-</span> <span class="fu">which.min</span>(mean.cv) </span>
+<span id="cb10-22"><a href="#cb10-22" aria-hidden="true" tabindex="-1"></a>aa <span class="co">#finds which regression model has the lowest MSE</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>36 
+36 </code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>mean.cv[aa]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>        36 
+3456368028 </code></pre>
+</div>
+</div>
+<p>CV error=3446954895</p>
+</section>
+<section id="k-folds-cv-poly-variables" class="level2" data-number="1.6">
+<h2 data-number="1.6" class="anchored" data-anchor-id="k-folds-cv-poly-variables"><span class="header-section-number">1.6</span> k-folds CV poly variables</h2>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a>k <span class="ot">&lt;-</span> <span class="dv">10</span></span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">6789</span>)</span>
+<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a>folds <span class="ot">&lt;-</span> <span class="fu">sample</span>(<span class="dv">1</span><span class="sc">:</span>k, <span class="fu">nrow</span>(data), <span class="at">replace =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a>cv.errors <span class="ot">&lt;-</span> <span class="fu">matrix</span>(<span class="cn">NA</span>, k, <span class="dv">38</span>, <span class="at">dimnames =</span> <span class="fu">list</span>(<span class="cn">NULL</span>, <span class="fu">paste</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">38</span>)))</span>
+<span id="cb14-5"><a href="#cb14-5" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> (j <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span>k){</span>
+<span id="cb14-6"><a href="#cb14-6" aria-hidden="true" tabindex="-1"></a>  best.fit <span class="ot">&lt;-</span> <span class="fu">regsubsets</span>(Price <span class="sc">~</span> . <span class="sc">+</span> <span class="fu">I</span>(Area<span class="sc">^</span><span class="dv">2</span>) <span class="sc">+</span> <span class="fu">I</span>(LeaseRem<span class="sc">^</span><span class="dv">2</span>), <span class="at">data =</span> data[folds <span class="sc">!=</span> j,], <span class="at">nvmax =</span> <span class="dv">38</span>) <span class="co">#Function for performing cross validation @ the j fold</span></span>
+<span id="cb14-7"><a href="#cb14-7" aria-hidden="true" tabindex="-1"></a>  <span class="cf">for</span> (i <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span><span class="dv">38</span>) {</span>
+<span id="cb14-8"><a href="#cb14-8" aria-hidden="true" tabindex="-1"></a>    pred <span class="ot">&lt;-</span> <span class="fu">predict.regsubsets</span>(best.fit, data[folds <span class="sc">==</span>j,], <span class="at">id =</span> i) </span>
+<span id="cb14-9"><a href="#cb14-9" aria-hidden="true" tabindex="-1"></a>    cv.errors[j, i] <span class="ot">&lt;-</span> <span class="fu">mean</span>((data<span class="sc">$</span>Price[folds <span class="sc">==</span>j] <span class="sc">-</span> pred)<span class="sc">^</span><span class="dv">2</span>) <span class="co">#Function for making prediction for computing the MSE</span></span>
+<span id="cb14-10"><a href="#cb14-10" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb14-11"><a href="#cb14-11" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb14-12"><a href="#cb14-12" aria-hidden="true" tabindex="-1"></a>mean.cv <span class="ot">&lt;-</span> <span class="fu">apply</span>(cv.errors, <span class="dv">2</span>, mean) <span class="co">#apply function averages over the columns of the matrix </span></span>
+<span id="cb14-13"><a href="#cb14-13" aria-hidden="true" tabindex="-1"></a>bb <span class="ot">&lt;-</span> <span class="fu">which.min</span>(mean.cv) </span>
+<span id="cb14-14"><a href="#cb14-14" aria-hidden="true" tabindex="-1"></a>bb <span class="co">#finds which regression model has the lowest MSE</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>38 
+38 </code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a>mean.cv[bb]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>        38 
+3384739805 </code></pre>
+</div>
+</div>
+<p>cv error: 3376920291 (reduced from previously)</p>
+</section>
+<section id="choosing-interaction-terms" class="level2" data-number="1.7">
+<h2 data-number="1.7" class="anchored" data-anchor-id="choosing-interaction-terms"><span class="header-section-number">1.7</span> Choosing interaction terms</h2>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb18"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a>ss2 <span class="ot">&lt;-</span> <span class="fu">glm</span>(Price <span class="sc">~</span> . <span class="sc">+</span> <span class="fu">I</span>(Area<span class="sc">^</span><span class="dv">2</span>) <span class="sc">+</span> <span class="fu">I</span>(LeaseRem<span class="sc">^</span><span class="dv">2</span>), <span class="at">data =</span> data)</span>
+<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a>cv.err2 <span class="ot">&lt;-</span> <span class="fu">cv.glm</span>(data, ss2, <span class="at">K =</span> <span class="dv">10</span>)</span>
+<span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a>cv.err2<span class="sc">$</span>delta[<span class="dv">1</span>]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 3377445110</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb20"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a>ss3 <span class="ot">&lt;-</span> <span class="fu">glm</span>(Price <span class="sc">~</span> . <span class="sc">+</span> <span class="fu">I</span>(Area<span class="sc">^</span><span class="dv">2</span>) <span class="sc">+</span> <span class="fu">I</span>(LeaseRem<span class="sc">^</span><span class="dv">2</span>) <span class="sc">+</span> Area<span class="sc">:</span>Model, <span class="at">data =</span> data)</span>
+<span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a>cv.err3 <span class="ot">&lt;-</span> <span class="fu">cv.glm</span>(data, ss3, <span class="at">K =</span> <span class="dv">10</span>)</span>
+<span id="cb20-3"><a href="#cb20-3" aria-hidden="true" tabindex="-1"></a>cv.err3<span class="sc">$</span>delta[<span class="dv">1</span>]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 3369624052</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb22"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a>ss4 <span class="ot">&lt;-</span> <span class="fu">glm</span>(Price <span class="sc">~</span> . <span class="sc">+</span> <span class="fu">I</span>(Area<span class="sc">^</span><span class="dv">2</span>) <span class="sc">+</span> <span class="fu">I</span>(LeaseRem<span class="sc">^</span><span class="dv">2</span>) <span class="sc">+</span> Area<span class="sc">:</span>Model <span class="sc">+</span> Area<span class="sc">:</span>Town, <span class="at">data =</span> data)</span>
+<span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a>cv.err4 <span class="ot">&lt;-</span> <span class="fu">cv.glm</span>(data, ss4, <span class="at">K =</span> <span class="dv">10</span>)</span>
+<span id="cb22-3"><a href="#cb22-3" aria-hidden="true" tabindex="-1"></a>cv.err4<span class="sc">$</span>delta[<span class="dv">1</span>]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 3069297922</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb24"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a>ss5 <span class="ot">&lt;-</span> <span class="fu">glm</span>(Price <span class="sc">~</span> . <span class="sc">+</span> <span class="fu">I</span>(Area<span class="sc">^</span><span class="dv">2</span>) <span class="sc">+</span> <span class="fu">I</span>(LeaseRem<span class="sc">^</span><span class="dv">2</span>) <span class="sc">+</span> Area<span class="sc">:</span>Model <span class="sc">+</span> Area<span class="sc">:</span>Town <span class="sc">+</span> Area<span class="sc">:</span>Story, <span class="at">data =</span> data)</span>
+<span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a>cv.err5 <span class="ot">&lt;-</span> <span class="fu">cv.glm</span>(data, ss5, <span class="at">K =</span> <span class="dv">10</span>)</span>
+<span id="cb24-3"><a href="#cb24-3" aria-hidden="true" tabindex="-1"></a>cv.err5<span class="sc">$</span>delta[<span class="dv">1</span>]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 3068671934</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb26"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a>ss6 <span class="ot">&lt;-</span> <span class="fu">glm</span>(Price <span class="sc">~</span> . <span class="sc">+</span> <span class="fu">I</span>(Area<span class="sc">^</span><span class="dv">2</span>) <span class="sc">+</span> <span class="fu">I</span>(LeaseRem<span class="sc">^</span><span class="dv">2</span>) <span class="sc">+</span> Area<span class="sc">:</span>Model <span class="sc">+</span> Area<span class="sc">:</span>Town <span class="sc">+</span> Town<span class="sc">:</span>LeaseRem, <span class="at">data =</span> data)</span>
+<span id="cb26-2"><a href="#cb26-2" aria-hidden="true" tabindex="-1"></a>cv.err6 <span class="ot">&lt;-</span> <span class="fu">cv.glm</span>(data, ss6, <span class="at">K =</span> <span class="dv">10</span>)</span>
+<span id="cb26-3"><a href="#cb26-3" aria-hidden="true" tabindex="-1"></a>cv.err6<span class="sc">$</span>delta[<span class="dv">1</span>]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 2783624091</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb28"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a>ss7 <span class="ot">&lt;-</span> <span class="fu">glm</span>(Price <span class="sc">~</span> . <span class="sc">+</span> <span class="fu">I</span>(Area<span class="sc">^</span><span class="dv">2</span>) <span class="sc">+</span> <span class="fu">I</span>(LeaseRem<span class="sc">^</span><span class="dv">2</span>) <span class="sc">+</span> Area<span class="sc">:</span>Model <span class="sc">+</span> Area<span class="sc">:</span>Town <span class="sc">+</span> LeaseRem<span class="sc">:</span>Town <span class="sc">+</span> LeaseRem<span class="sc">:</span>Model, <span class="at">data =</span> data)</span>
+<span id="cb28-2"><a href="#cb28-2" aria-hidden="true" tabindex="-1"></a>cv.err7 <span class="ot">&lt;-</span> <span class="fu">cv.glm</span>(data, ss7, <span class="at">K =</span> <span class="dv">10</span>)</span>
+<span id="cb28-3"><a href="#cb28-3" aria-hidden="true" tabindex="-1"></a>cv.err7<span class="sc">$</span>delta[<span class="dv">1</span>]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 2707993781</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb30"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a>ss8 <span class="ot">&lt;-</span> <span class="fu">glm</span>(Price <span class="sc">~</span> . <span class="sc">+</span> <span class="fu">I</span>(Area<span class="sc">^</span><span class="dv">2</span>) <span class="sc">+</span> <span class="fu">I</span>(LeaseRem<span class="sc">^</span><span class="dv">2</span>) <span class="sc">+</span> Area<span class="sc">:</span>Model <span class="sc">+</span> Area<span class="sc">:</span>Town <span class="sc">+</span> LeaseRem<span class="sc">:</span>Town <span class="sc">+</span> LeaseRem<span class="sc">:</span>Model <span class="sc">+</span> LeaseRem<span class="sc">:</span>Story, <span class="at">data =</span> data)</span>
+<span id="cb30-2"><a href="#cb30-2" aria-hidden="true" tabindex="-1"></a>cv.err8 <span class="ot">&lt;-</span> <span class="fu">cv.glm</span>(data, ss8, <span class="at">K =</span> <span class="dv">10</span>)</span>
+<span id="cb30-3"><a href="#cb30-3" aria-hidden="true" tabindex="-1"></a>cv.err8<span class="sc">$</span>delta[<span class="dv">1</span>]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 2694944674</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb32"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb32-1"><a href="#cb32-1" aria-hidden="true" tabindex="-1"></a>ss9 <span class="ot">&lt;-</span> <span class="fu">glm</span>(Price <span class="sc">~</span> . <span class="sc">+</span> <span class="fu">I</span>(Area<span class="sc">^</span><span class="dv">2</span>) <span class="sc">+</span> <span class="fu">I</span>(LeaseRem<span class="sc">^</span><span class="dv">2</span>) <span class="sc">+</span> Area<span class="sc">:</span>Model <span class="sc">+</span> Area<span class="sc">:</span>Town <span class="sc">+</span> LeaseRem<span class="sc">:</span>Town <span class="sc">+</span> LeaseRem<span class="sc">:</span>Model <span class="sc">+</span> LeaseRem<span class="sc">:</span>Area, <span class="at">data =</span> data)</span>
+<span id="cb32-2"><a href="#cb32-2" aria-hidden="true" tabindex="-1"></a>cv.err9 <span class="ot">&lt;-</span> <span class="fu">cv.glm</span>(data, ss9, <span class="at">K =</span> <span class="dv">10</span>)</span>
+<span id="cb32-3"><a href="#cb32-3" aria-hidden="true" tabindex="-1"></a>cv.err9<span class="sc">$</span>delta[<span class="dv">1</span>]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 2735526944</code></pre>
+</div>
+</div>
+<p>Ridge Regression</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb34"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb34-1"><a href="#cb34-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(glmnet)</span>
+<span id="cb34-2"><a href="#cb34-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb34-3"><a href="#cb34-3" aria-hidden="true" tabindex="-1"></a>train<span class="ot">&lt;-</span><span class="fu">sample</span>(<span class="dv">1</span><span class="sc">:</span><span class="fu">nrow</span>(data), <span class="fu">nrow</span>(data)<span class="sc">/</span><span class="dv">2</span>)</span>
+<span id="cb34-4"><a href="#cb34-4" aria-hidden="true" tabindex="-1"></a>test<span class="ot">&lt;-</span><span class="sc">-</span>train</span>
+<span id="cb34-5"><a href="#cb34-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb34-6"><a href="#cb34-6" aria-hidden="true" tabindex="-1"></a>x.train<span class="ot">&lt;-</span><span class="fu">model.matrix</span>(Price <span class="sc">~</span> . <span class="sc">+</span> <span class="fu">I</span>(Area<span class="sc">^</span><span class="dv">2</span>) <span class="sc">+</span> <span class="fu">I</span>(LeaseRem<span class="sc">^</span><span class="dv">2</span>) <span class="sc">+</span> Area<span class="sc">:</span>Model <span class="sc">+</span> Area<span class="sc">:</span>Town <span class="sc">+</span> LeaseRem<span class="sc">:</span>Town <span class="sc">+</span> LeaseRem<span class="sc">:</span>Model <span class="sc">+</span> LeaseRem<span class="sc">:</span>Area, <span class="at">data=</span>data[train,])[,<span class="sc">-</span><span class="dv">6</span>]</span>
+<span id="cb34-7"><a href="#cb34-7" aria-hidden="true" tabindex="-1"></a>y.train<span class="ot">&lt;-</span>data[train,]<span class="sc">$</span>Price</span>
+<span id="cb34-8"><a href="#cb34-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb34-9"><a href="#cb34-9" aria-hidden="true" tabindex="-1"></a>x.test<span class="ot">&lt;-</span><span class="fu">model.matrix</span>(Price <span class="sc">~</span> . <span class="sc">+</span> <span class="fu">I</span>(Area<span class="sc">^</span><span class="dv">2</span>) <span class="sc">+</span> <span class="fu">I</span>(LeaseRem<span class="sc">^</span><span class="dv">2</span>) <span class="sc">+</span> Area<span class="sc">:</span>Model <span class="sc">+</span> Area<span class="sc">:</span>Town <span class="sc">+</span> LeaseRem<span class="sc">:</span>Town <span class="sc">+</span> LeaseRem<span class="sc">:</span>Model <span class="sc">+</span> LeaseRem<span class="sc">:</span>Area, <span class="at">data=</span>data[test,])[,<span class="sc">-</span><span class="dv">6</span>]</span>
+<span id="cb34-10"><a href="#cb34-10" aria-hidden="true" tabindex="-1"></a>y.test<span class="ot">&lt;-</span>data[test,]<span class="sc">$</span>Price</span>
+<span id="cb34-11"><a href="#cb34-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb34-12"><a href="#cb34-12" aria-hidden="true" tabindex="-1"></a>cv.rr <span class="ot">&lt;-</span> <span class="fu">cv.glmnet</span>(x.train, y.train, <span class="at">alpha=</span><span class="dv">0</span>)</span>
+<span id="cb34-13"><a href="#cb34-13" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(cv.rr)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="Stat-learning-2_files/figure-html/unnamed-chunk-7-1.png" class="img-fluid" width="672"></p>
+</div>
+<div class="sourceCode cell-code" id="cb35"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb35-1"><a href="#cb35-1" aria-hidden="true" tabindex="-1"></a>bestlam <span class="ot">&lt;-</span> cv.rr<span class="sc">$</span>lambda.min</span>
+<span id="cb35-2"><a href="#cb35-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb35-3"><a href="#cb35-3" aria-hidden="true" tabindex="-1"></a>ridge.mod <span class="ot">&lt;-</span> <span class="fu">glmnet</span>(x.train, y.train, <span class="at">alpha=</span><span class="dv">0</span>)</span>
+<span id="cb35-4"><a href="#cb35-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb35-5"><a href="#cb35-5" aria-hidden="true" tabindex="-1"></a>ridge.pred <span class="ot">&lt;-</span> <span class="fu">predict</span>(ridge.mod, <span class="at">s=</span>bestlam, <span class="at">newx=</span>x.test) </span>
+<span id="cb35-6"><a href="#cb35-6" aria-hidden="true" tabindex="-1"></a><span class="fu">mean</span>((ridge.pred<span class="sc">-</span>y.test)<span class="sc">^</span><span class="dv">2</span>) <span class="co">#calc training error</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 3194900912</code></pre>
+</div>
+</div>
+<p>test mse=3130423699</p>
+<p>Lasso regression</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb37"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb37-1"><a href="#cb37-1" aria-hidden="true" tabindex="-1"></a>cv.lasso <span class="ot">&lt;-</span> <span class="fu">cv.glmnet</span>(x.train, y.train, <span class="at">alpha=</span><span class="dv">1</span>)</span>
+<span id="cb37-2"><a href="#cb37-2" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(cv.lasso)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="Stat-learning-2_files/figure-html/unnamed-chunk-8-1.png" class="img-fluid" width="672"></p>
+</div>
+<div class="sourceCode cell-code" id="cb38"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb38-1"><a href="#cb38-1" aria-hidden="true" tabindex="-1"></a>bestlam <span class="ot">&lt;-</span> cv.lasso<span class="sc">$</span>lambda.min</span>
+<span id="cb38-2"><a href="#cb38-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb38-3"><a href="#cb38-3" aria-hidden="true" tabindex="-1"></a>lasso.mod <span class="ot">&lt;-</span> <span class="fu">glmnet</span>(x.train, y.train, <span class="at">alpha=</span><span class="dv">1</span>)</span>
+<span id="cb38-4"><a href="#cb38-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb38-5"><a href="#cb38-5" aria-hidden="true" tabindex="-1"></a>lasso.pred <span class="ot">&lt;-</span> <span class="fu">predict</span>(lasso.mod, <span class="at">s=</span>bestlam, <span class="at">newx=</span>x.test) </span>
+<span id="cb38-6"><a href="#cb38-6" aria-hidden="true" tabindex="-1"></a><span class="fu">mean</span>((lasso.pred<span class="sc">-</span>y.test)<span class="sc">^</span><span class="dv">2</span>) <span class="co">#calc training error</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 2764489430</code></pre>
+</div>
+</div>
+<p>test mse=2641542810</p>
+</section>
+<section id="tree-method" class="level2" data-number="1.8">
+<h2 data-number="1.8" class="anchored" data-anchor-id="tree-method"><span class="header-section-number">1.8</span> Tree method</h2>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb40"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb40-1"><a href="#cb40-1" aria-hidden="true" tabindex="-1"></a><span class="fu">RNGkind</span>(<span class="at">sample.kind=</span><span class="st">"Rounding"</span>)</span>
+<span id="cb40-2"><a href="#cb40-2" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">6789</span>)</span>
+<span id="cb40-3"><a href="#cb40-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-4"><a href="#cb40-4" aria-hidden="true" tabindex="-1"></a>tree.price <span class="ot">&lt;-</span> <span class="fu">tree</span>(Price<span class="sc">~</span>., data[train,])</span>
+<span id="cb40-5"><a href="#cb40-5" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(tree.price)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+Regression tree:
+tree(formula = Price ~ ., data = data[train, ])
+Variables actually used in tree construction:
+[1] "Town"     "LeaseRem"
+Number of terminal nodes:  8 
+Residual mean deviance:  4.753e+09 = 1.183e+13 / 2489 
+Distribution of residuals:
+   Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
+-256300  -38680   -4905       0   35460  403500 </code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb42"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb42-1"><a href="#cb42-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(tree.price)</span>
+<span id="cb42-2"><a href="#cb42-2" aria-hidden="true" tabindex="-1"></a><span class="fu">title</span>(<span class="at">main=</span><span class="st">"Classification tree for price data"</span>)</span>
+<span id="cb42-3"><a href="#cb42-3" aria-hidden="true" tabindex="-1"></a><span class="fu">text</span>(tree.price, <span class="at">pretty=</span><span class="dv">0</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="Stat-learning-2_files/figure-html/unnamed-chunk-9-1.png" class="img-fluid" width="672"></p>
+</div>
+<div class="sourceCode cell-code" id="cb43"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb43-1"><a href="#cb43-1" aria-hidden="true" tabindex="-1"></a>yhat<span class="ot">&lt;-</span><span class="fu">predict</span>(tree.price, <span class="at">newdata=</span>data[test,])</span>
+<span id="cb43-2"><a href="#cb43-2" aria-hidden="true" tabindex="-1"></a><span class="fu">mean</span>((yhat<span class="sc">-</span>data[test,]<span class="sc">$</span>Price)<span class="sc">^</span><span class="dv">2</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 4903542115</code></pre>
+</div>
+</div>
+<p>Test mse: 4552948559</p>
+</section>
+<section id="pruning-tree" class="level2" data-number="1.9">
+<h2 data-number="1.9" class="anchored" data-anchor-id="pruning-tree"><span class="header-section-number">1.9</span> Pruning tree</h2>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb45"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb45-1"><a href="#cb45-1" aria-hidden="true" tabindex="-1"></a><span class="co"># pruning tree using cross validation</span></span>
+<span id="cb45-2"><a href="#cb45-2" aria-hidden="true" tabindex="-1"></a>cv.price <span class="ot">&lt;-</span> <span class="fu">cv.tree</span>(tree.price)  <span class="co"># use the cv.tree function to prune the tree.boston</span></span>
+<span id="cb45-3"><a href="#cb45-3" aria-hidden="true" tabindex="-1"></a>cv.price</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>$size
+[1] 8 7 6 5 4 3 2 1
+
+$dev
+[1] 1.197899e+13 1.303126e+13 1.458282e+13 1.529848e+13 1.736211e+13
+[6] 2.219128e+13 2.657853e+13 4.655700e+13
+
+$k
+[1]         -Inf 7.927569e+11 1.112794e+12 1.276811e+12 2.117285e+12
+[6] 4.410722e+12 4.994679e+12 2.000411e+13
+
+$method
+[1] "deviance"
+
+attr(,"class")
+[1] "prune"         "tree.sequence"</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb47"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb47-1"><a href="#cb47-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Plot size against error</span></span>
+<span id="cb47-2"><a href="#cb47-2" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(cv.price<span class="sc">$</span>size, cv.price<span class="sc">$</span>dev, <span class="at">type=</span><span class="st">"b"</span>, <span class="at">main=</span><span class="st">"Cross validation: Deviance versus Size"</span>,</span>
+<span id="cb47-3"><a href="#cb47-3" aria-hidden="true" tabindex="-1"></a>     <span class="at">xlab=</span><span class="st">"Number of terminal nodes"</span>, <span class="at">ylab=</span><span class="st">"deviance"</span>) </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="Stat-learning-2_files/figure-html/unnamed-chunk-10-1.png" class="img-fluid" width="672"></p>
+</div>
+<div class="sourceCode cell-code" id="cb48"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb48-1"><a href="#cb48-1" aria-hidden="true" tabindex="-1"></a><span class="co"># from plot, we see the relationship between nodes and deviation</span></span>
+<span id="cb48-2"><a href="#cb48-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb48-3"><a href="#cb48-3" aria-hidden="true" tabindex="-1"></a>nn <span class="ot">&lt;-</span> cv.price<span class="sc">$</span>size[<span class="fu">which.min</span>(cv.price<span class="sc">$</span>dev)]  <span class="co"># identify the optimal number of nodes </span></span>
+<span id="cb48-4"><a href="#cb48-4" aria-hidden="true" tabindex="-1"></a>nn</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 8</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb50"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb50-1"><a href="#cb50-1" aria-hidden="true" tabindex="-1"></a><span class="co"># in this case using cv does not reccommend any changes</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+
+
+</section>
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const clipboard = new window.ClipboardJS('.code-copy-button', {
+    target: function(trigger) {
+      return trigger.previousElementSibling;
+    }
+  });
+  clipboard.on('success', function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    setTimeout(function() {
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  });
+  function tippyHover(el, contentFn) {
+    const config = {
+      allowHTML: true,
+      content: contentFn,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start'
+    };
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      return note.innerHTML;
+    });
+  }
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const cites = ref.parentNode.getAttribute('data-cites').split(' ');
+    tippyHover(ref, function() {
+      var popup = window.document.createElement('div');
+      cites.forEach(function(cite) {
+        var citeDiv = window.document.createElement('div');
+        citeDiv.classList.add('hanging-indent');
+        citeDiv.classList.add('csl-entry');
+        var biblioDiv = window.document.getElementById('ref-' + cite);
+        if (biblioDiv) {
+          citeDiv.innerHTML = biblioDiv.innerHTML;
+        }
+        popup.appendChild(citeDiv);
+      });
+      return popup.innerHTML;
+    });
+  }
+});
+</script>
+</div> <!-- /content -->
+
+
+
+</body></html>
