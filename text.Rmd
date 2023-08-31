@@ -1,0 +1,61 @@
+---
+title: "R Notebook"
+output: html_notebook
+---
+
+## Sentiment Analysis
+
+This project works on information provided on this [website](https://data-flair.training/blogs/data-science-r-sentiment-analysis-project/), to learn more about sentiment analysis in text analysis in R.
+
+The aim of the project is to build a sentiment analysis model which will categorise words based on their sentiments, whether they are positive, negative and the magnitude of it. Sentiment analysis is a process of extracting opinions that have different polarities, ie positive, negative or neutral.
+
+## What is text mining
+
+The process of analysing collections of textual materials in order to capture key concepts and themes to uncover hidden relationships and trends without requiring that you know precise words or terms that authors have used to express those concepts
+
+## Packages used
+
+```{r}
+pacman::p_load(janeaustenr, stringr, tidytext)
+
+tidytext::sentiments
+```
+
+1.  Tidytext: There are a variety of methods and dictionaries that exist for evaluating opinion or emotion in text. The tidytext package provides access to several sentiment lexicons.
+
+-   AFINN from Finn Årup Nielsen,
+
+-   bing from Bing Liu and collaborators, and
+
+-   nrc from Saif Mohammad and Peter Turney.
+
+which are all based on unigrams i.e single words. The `nrc` lexicon categorizes words in a binary fashion (\"yes\"/\"no\") into categories of positive, negative, anger, anticipation, disgust, fear, joy, sadness, surprise, and trust. The `bing` lexicon categorizes words in a binary fashion into positive and negative categories. The `AFINN` lexicon assigns words with a score that runs between -5 and 5, with negative scores indicating negative sentiment and positive scores indicating positive sentiment.
+
+```{r}
+library(tidytext)
+get_sentiments("afinn")
+get_sentiments("bing")
+get_sentiments("nrc")
+```
+
+More info on sentiment analysis can be found on [this website](https://www.tidytextmining.com/sentiment.html).
+
+## Performing Sentiment Analysis using Inner Join
+
+```{r}
+library(janeaustenr)
+library(stringr)
+library(tidytext)
+library(dplyr)
+```
+
+
+```{r}
+tidy_data <- austen_books() %>%
+ group_by(book) %>%
+ mutate(linenumber = row_number(),
+   chapter = cumsum(str_detect(text, regex("^chapter [\\divxlc]", 
+                          ignore_case = TRUE)))) %>%
+ungroup() %>%
+unnest_tokens(word, text)
+```

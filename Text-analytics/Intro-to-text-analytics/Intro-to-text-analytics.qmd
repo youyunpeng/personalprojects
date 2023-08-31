@@ -1,5 +1,5 @@
 ---
-title: "Introduction"
+title: "About Text Analytics"
 date: "10 August 2023"
 date-modified: "`r Sys.Date()`"
 number-sections: true
@@ -13,7 +13,7 @@ editor: visual
 
 # Background
 
-In exploring more about text mining and text analytics, we reference the website [Text Mining with R](https://www.tidytextmining.com/) by Julia Silge and David Robinson, and highlight some key learning points from the textbook. Thereafter, we apply some of the learnings in the following self initiated projects.
+In exploring more about text mining and text analytics, we reference the website [Text Mining with R](https://www.tidytextmining.com/) by Julia Silge and David Robinson, and highlight some key learning points from the textbook. Thereafter, we apply some of the learnings in the following self initiated projects. This section serves to record some of my key learning points from tutorials available publicly.
 
 # Tidy Text Format
 
@@ -61,6 +61,7 @@ The text of Jane Austen's 6 completed, published novels from the janeaustenr pac
 library(janeaustenr)
 library(dplyr)
 library(stringr)
+library(tidyverse)
 
 austen_books()
 ```
@@ -127,6 +128,7 @@ tidy_books |>
 
 In this section, we are referencing both the website [Text Mining with R](https://www.tidytextmining.com/), as well as [Kaggle tutorial on sentimental analysis](https://www.kaggle.com/code/rtatman/tutorial-sentiment-analysis-in-r/input) by Rachel Tatman.
 
+## Importance of sentiment analysis
 In this next section, we hope to learn more about sentiment analysis in R. Sentiment analysis is the computational task of automatically determining what feelings a writer is expressing in text. Approaches that analyst can take to conduct sentiment analysis includes
 
 1.  Create/find a list of words associated with strongly positive or negative sentiment
@@ -143,23 +145,154 @@ library(tidyverse)
 library(tidytext)
 library(glue)
 library(stringr)
+library(glue)
 
 files<-list.files(path="data")
 files
 ```
 
+## Data wrangling
+Our end goal is to perform the following tasks for all the text files we have
+1. Read all the files into R
+2. Tokenise all the text files
+3. Categorise tokens into sentiment groups (positive or negative)
+4. Analyse trends in sentiments
+
+For the first 3 steps, we explore how the code would look like if we perform the functions only for 1 file first. In the following code chunk, we import 1 selected file into into R and tokenise the text. 
 ```{r}
 # stick together the path to the file & 1st file name
+fileName <- glue::glue("data/", files[1], sep = "") 
 
-#fileName \<- glue("data", files\[1\], sep = "") \# get rid of any sneaky trailing spaces fileName \<- trimws(fileName)
+# get rid of any sneaky trailing spaces 
+fileName <- trimws(fileName)
 
 # read in the new file
+fileText <- glue::glue(read_file(fileName)) 
 
-#fileText \<- glue(read_file(fileName)) \# remove any dollar signs (they're special characters in R) fileText \<- gsub("\\\$", "", fileText)
+# remove any dollar signs (they're special characters in R)
+fileText <- gsub("\\$", "", fileText)
 
 # tokenize
-
-#tokens \<- data_frame(text = fileText) %\>% unnest_tokens(word, text)
-
+tokens <- data_frame(text = fileText) |>  unnest_tokens(word, text)
 ```
 
+With this list of tokens, we can compare them against a list of words with either positive or negative sentiment.
+
+The tidytext package has several lists of sentiment lexicons including 1. Afinn: containing negative and positive words on a scale from -5 to 5 2. Bing: containing words coded as negative or positive sentiment 3. NRC: containing words representing the following wider range of sentiments: anger, anticipation, disgust, fear, joy... etc.
+
+We will be using Bing as part of this tutorial
+
+```{r}
+# getting the sentiment from the first text:
+tokens |> 
+  inner_join(get_sentiments("bing")) |> 
+  count(sentiment) |> 
+  pivot_wider(names_from = sentiment, values_from=n) |> 
+  mutate(sentiment=positive-negative)
+```
+
+This output means that for the first text "Adams_1797", there are 47 negative, and 102 positive polarity words. This means that there are 55 more positive than negative words. 
+
+We can create a function to generate the number of words with each sentiment to run through all the txt files that we have.
+
+```{r}
+GetSentiment<- function(file){
+  #tokenise
+  fileName <- glue("data/", file, sep = "")
+  fileName <- trimws(fileName)
+  fileText <- glue(read_file(fileName))
+  fileText <- gsub("\\$", "", fileText)
+  tokens <- data_frame(text = fileText) |>  unnest_tokens(word, text)
+  
+  #get sentiment
+  sentiment<- tokens |> 
+    inner_join(get_sentiments("bing")) |>
+    count(sentiment) |> 
+    pivot_wider(names_from = sentiment, values_from=n) |> 
+    mutate(sentiment=positive-negative) |>
+    mutate(file=file) |> #add name of file
+    mutate(year = as.numeric(str_match(file, "\\d{4}"))) |> 
+    mutate(president = str_match(file, "(.*?)_")[2]) #add president
+  
+  return(sentiment)
+}
+
+GetSentiment(files[1])
+```
+
+We can create a loop that runs this function through all our txt files:
+
+```{r}
+sentiments<- data_frame() # initialisig an empty data frame first
+
+#creating a loop to populate the empty data frame
+for(i in files){
+    sentiments <- rbind(sentiments, GetSentiment(i))
+}
+
+summary(sentiments)
+```
+
+Because there are some surnames that are commone, we manually edit them below:
+```{r}
+# disambiguate Bush Sr. and George W. Bush 
+# correct president in applicable rows
+bushSr <- sentiments %>% 
+  filter(president == "Bush") %>% # get rows where the president is named "Bush"...
+  filter(year < 2000) %>% # ...and the year is before 200
+  mutate(president = "Bush Sr.") # and change "Bush" to "Bush Sr."
+
+# remove incorrect rows
+sentiments <- anti_join(sentiments, sentiments[sentiments$president == "Bush" & sentiments$year < 2000, ])
+
+# add corrected rows to data_frame 
+sentiments <- full_join(sentiments, bushSr)
+
+summary(sentiments)
+```
+
+## Data visualisation and analysis
+
+With our data prepared, we can now visualise trends in the changes of sentiments over time. We may be interested in how speech sentiments have varied in the last 30 years
+
+```{r}
+ggplot(filter(sentiments, year>1990), aes(x=as.numeric(year), y=sentiment))+
+  geom_point(aes(color=president))+
+  geom_smooth(method="auto")
+```
+
+We can further segment the sentiment data based on the president.
+
+```{r}
+ggplot(filter(sentiments, year>1990), aes(x = president, y = sentiment, color = president)) + 
+  geom_boxplot()
+```
+
+We can further investigate if there is a significant difference in sentiments from Republican and Democratic presidents. To do this, we can create 2 dataframes, capturing sentiments from Republican and Democratic presidents respectively. From this [website](https://www.theguardian.com/news/datablog/2012/oct/15/us-presidents-listed#data), we can download data on the president, year and party of each president.
+
+```{r}
+partydata<- read.csv("US presidents listed - ALL NAMES.csv")
+partydata<- partydata |> 
+  rename(year=Years..after.inauguration.) |> 
+  select(year, Party)
+
+sentiments.party<-sentiments |> 
+  inner_join(partydata, by="year")
+
+democrat<-sentiments.party |> 
+  filter(Party=="Democrat")
+
+republican<-sentiments.party |> 
+  filter(Party=="Republican")
+
+#conduct t-test
+t.test(democrat$sentiment, republican$sentiment)
+```
+
+From our t-test result, we see that while sample mean of democrats (142.6310) and republican (171.9663) may be different, there is insufficient evidence at the 0.05 level of confidence to conclude that there is a statistical significant difference in the sentiments from both groups. At the same time, given that the 95% confidence interval includes zero, it further supports the argument that there is no significant statistical difference.
+
+However, we can still visualise the difference in terms of sample means and variance using a box plot below.
+
+```{r}
+ggplot(filter(sentiments.party, Party=="Democrat"|Party=="Republican"), aes(x = Party, y = sentiment, color = Party)) + geom_boxplot() + geom_point()
+```

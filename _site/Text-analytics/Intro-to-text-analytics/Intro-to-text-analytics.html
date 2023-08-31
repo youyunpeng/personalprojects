@@ -8,7 +8,7 @@
 
 <meta name="dcterms.date" content="2023-08-10">
 
-<title>personalprojects - Introduction</title>
+<title>personalprojects - About Text Analytics</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -223,7 +223,12 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
   <li><a href="#data-analysis" id="toc-data-analysis" class="nav-link" data-scroll-target="#data-analysis"><span class="toc-section-number">2.2.2</span>  Data analysis</a></li>
   </ul></li>
   </ul></li>
-  <li><a href="#sentiment-analysis-with-tidy-data" id="toc-sentiment-analysis-with-tidy-data" class="nav-link" data-scroll-target="#sentiment-analysis-with-tidy-data"><span class="toc-section-number">3</span>  Sentiment Analysis with Tidy Data</a></li>
+  <li><a href="#sentiment-analysis-with-tidy-data" id="toc-sentiment-analysis-with-tidy-data" class="nav-link" data-scroll-target="#sentiment-analysis-with-tidy-data"><span class="toc-section-number">3</span>  Sentiment Analysis with Tidy Data</a>
+  <ul class="collapse">
+  <li><a href="#importance-of-sentiment-analysis" id="toc-importance-of-sentiment-analysis" class="nav-link" data-scroll-target="#importance-of-sentiment-analysis"><span class="toc-section-number">3.1</span>  Importance of sentiment analysis</a></li>
+  <li><a href="#data-wrangling-1" id="toc-data-wrangling-1" class="nav-link" data-scroll-target="#data-wrangling-1"><span class="toc-section-number">3.2</span>  Data wrangling</a></li>
+  <li><a href="#data-visualisation-and-analysis" id="toc-data-visualisation-and-analysis" class="nav-link" data-scroll-target="#data-visualisation-and-analysis"><span class="toc-section-number">3.3</span>  Data visualisation and analysis</a></li>
+  </ul></li>
   </ul>
 </nav>
     </div>
@@ -232,7 +237,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
-<h1 class="title">Introduction</h1>
+<h1 class="title">About Text Analytics</h1>
 </div>
 
 
@@ -254,7 +259,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 
 <section id="background" class="level1" data-number="1">
 <h1 data-number="1"><span class="header-section-number">1</span> Background</h1>
-<p>In exploring more about text mining and text analytics, we reference the website <a href="https://www.tidytextmining.com/">Text Mining with R</a> by Julia Silge and David Robinson, and highlight some key learning points from the textbook. Thereafter, we apply some of the learnings in the following self initiated projects.</p>
+<p>In exploring more about text mining and text analytics, we reference the website <a href="https://www.tidytextmining.com/">Text Mining with R</a> by Julia Silge and David Robinson, and highlight some key learning points from the textbook. Thereafter, we apply some of the learnings in the following self initiated projects. This section serves to record some of my key learning points from tutorials available publicly.</p>
 </section>
 <section id="tidy-text-format" class="level1" data-number="2">
 <h1 data-number="2"><span class="header-section-number">2</span> Tidy Text Format</h1>
@@ -319,8 +324,9 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(janeaustenr)</span>
 <span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(dplyr)</span>
 <span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(stringr)</span>
-<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a><span class="fu">austen_books</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a><span class="fu">austen_books</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code># A tibble: 73,422 × 2
    text                    book               
@@ -461,6 +467,8 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <section id="sentiment-analysis-with-tidy-data" class="level1" data-number="3">
 <h1 data-number="3"><span class="header-section-number">3</span> Sentiment Analysis with Tidy Data</h1>
 <p>In this section, we are referencing both the website <a href="https://www.tidytextmining.com/">Text Mining with R</a>, as well as <a href="https://www.kaggle.com/code/rtatman/tutorial-sentiment-analysis-in-r/input">Kaggle tutorial on sentimental analysis</a> by Rachel Tatman.</p>
+<section id="importance-of-sentiment-analysis" class="level2" data-number="3.1">
+<h2 data-number="3.1" class="anchored" data-anchor-id="importance-of-sentiment-analysis"><span class="header-section-number">3.1</span> Importance of sentiment analysis</h2>
 <p>In this next section, we hope to learn more about sentiment analysis in R. Sentiment analysis is the computational task of automatically determining what feelings a writer is expressing in text. Approaches that analyst can take to conduct sentiment analysis includes</p>
 <ol type="1">
 <li><p>Create/find a list of words associated with strongly positive or negative sentiment</p></li>
@@ -474,9 +482,10 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidytext)</span>
 <span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(glue)</span>
 <span id="cb15-5"><a href="#cb15-5" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(stringr)</span>
-<span id="cb15-6"><a href="#cb15-6" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb15-7"><a href="#cb15-7" aria-hidden="true" tabindex="-1"></a>files<span class="ot">&lt;-</span><span class="fu">list.files</span>(<span class="at">path=</span><span class="st">"data"</span>)</span>
-<span id="cb15-8"><a href="#cb15-8" aria-hidden="true" tabindex="-1"></a>files</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb15-6"><a href="#cb15-6" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(glue)</span>
+<span id="cb15-7"><a href="#cb15-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-8"><a href="#cb15-8" aria-hidden="true" tabindex="-1"></a>files<span class="ot">&lt;-</span><span class="fu">list.files</span>(<span class="at">path=</span><span class="st">"data"</span>)</span>
+<span id="cb15-9"><a href="#cb15-9" aria-hidden="true" tabindex="-1"></a>files</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>  [1] "Adams_1797.txt"      "Adams_1798.txt"      "Adams_1799.txt"     
   [4] "Adams_1800.txt"      "Adams_1825.txt"      "Adams_1826.txt"     
@@ -542,36 +551,213 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 [184] "Roosevelt_1935.txt"  "Roosevelt_1936.txt"  "Roosevelt_1937.txt" 
 [187] "Roosevelt_1938.txt"  "Roosevelt_1939.txt"  "Roosevelt_1940.txt" 
 [190] "Roosevelt_1941.txt"  "Roosevelt_1942.txt"  "Roosevelt_1943.txt" 
-[193] "Roosevelt_1944.txt"  "Roosevelt_1945.txt"  "sotu"               
-[196] "Taft_1909.txt"       "Taft_1910.txt"       "Taft_1911.txt"      
-[199] "Taft_1912.txt"       "Taylor_1849.txt"     "Truman_1946.txt"    
-[202] "Truman_1947.txt"     "Truman_1948.txt"     "Truman_1949.txt"    
-[205] "Truman_1950.txt"     "Truman_1951.txt"     "Truman_1952.txt"    
-[208] "Truman_1953.txt"     "Trump_2017.txt"      "Trump_2018.txt"     
-[211] "Tyler_1841.txt"      "Tyler_1842.txt"      "Tyler_1843.txt"     
-[214] "Tyler_1844.txt"      "Washington_1790.txt" "Washington_1791.txt"
-[217] "Washington_1792.txt" "Washington_1793.txt" "Washington_1794.txt"
-[220] "Washington_1795.txt" "Washington_1796.txt" "Wilson_1913.txt"    
-[223] "Wilson_1914.txt"     "Wilson_1915.txt"     "Wilson_1916.txt"    
-[226] "Wilson_1917.txt"     "Wilson_1918.txt"     "Wilson_1919.txt"    
-[229] "Wilson_1920.txt"    </code></pre>
+[193] "Roosevelt_1944.txt"  "Roosevelt_1945.txt"  "Taft_1909.txt"      
+[196] "Taft_1910.txt"       "Taft_1911.txt"       "Taft_1912.txt"      
+[199] "Taylor_1849.txt"     "Truman_1946.txt"     "Truman_1947.txt"    
+[202] "Truman_1948.txt"     "Truman_1949.txt"     "Truman_1950.txt"    
+[205] "Truman_1951.txt"     "Truman_1952.txt"     "Truman_1953.txt"    
+[208] "Trump_2017.txt"      "Trump_2018.txt"      "Tyler_1841.txt"     
+[211] "Tyler_1842.txt"      "Tyler_1843.txt"      "Tyler_1844.txt"     
+[214] "Washington_1791.txt" "Washington_1792.txt" "Washington_1793.txt"
+[217] "Washington_1794.txt" "Washington_1795.txt" "Washington_1796.txt"
+[220] "Wilson_1913.txt"     "Wilson_1914.txt"     "Wilson_1915.txt"    
+[223] "Wilson_1916.txt"     "Wilson_1917.txt"     "Wilson_1918.txt"    
+[226] "Wilson_1919.txt"     "Wilson_1920.txt"    </code></pre>
 </div>
 </div>
+</section>
+<section id="data-wrangling-1" class="level2" data-number="3.2">
+<h2 data-number="3.2" class="anchored" data-anchor-id="data-wrangling-1"><span class="header-section-number">3.2</span> Data wrangling</h2>
+<p>Our end goal is to perform the following tasks for all the text files we have 1. Read all the files into R 2. Tokenise all the text files 3. Categorise tokens into sentiment groups (positive or negative) 4. Analyse trends in sentiments</p>
+<p>For the first 3 steps, we explore how the code would look like if we perform the functions only for 1 file first. In the following code chunk, we import 1 selected file into into R and tokenise the text.</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb17"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="co"># stick together the path to the file &amp; 1st file name</span></span>
-<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a><span class="co">#fileName \&lt;- glue("data", files\[1\], sep = "") \# get rid of any sneaky trailing spaces fileName \&lt;- trimws(fileName)</span></span>
-<span id="cb17-4"><a href="#cb17-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb17-5"><a href="#cb17-5" aria-hidden="true" tabindex="-1"></a><span class="co"># read in the new file</span></span>
+<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a>fileName <span class="ot">&lt;-</span> glue<span class="sc">::</span><span class="fu">glue</span>(<span class="st">"data/"</span>, files[<span class="dv">1</span>], <span class="at">sep =</span> <span class="st">""</span>) </span>
+<span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-4"><a href="#cb17-4" aria-hidden="true" tabindex="-1"></a><span class="co"># get rid of any sneaky trailing spaces </span></span>
+<span id="cb17-5"><a href="#cb17-5" aria-hidden="true" tabindex="-1"></a>fileName <span class="ot">&lt;-</span> <span class="fu">trimws</span>(fileName)</span>
 <span id="cb17-6"><a href="#cb17-6" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb17-7"><a href="#cb17-7" aria-hidden="true" tabindex="-1"></a><span class="co">#fileText \&lt;- glue(read_file(fileName)) \# remove any dollar signs (they're special characters in R) fileText \&lt;- gsub("\\\$", "", fileText)</span></span>
-<span id="cb17-8"><a href="#cb17-8" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb17-9"><a href="#cb17-9" aria-hidden="true" tabindex="-1"></a><span class="co"># tokenize</span></span>
-<span id="cb17-10"><a href="#cb17-10" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb17-11"><a href="#cb17-11" aria-hidden="true" tabindex="-1"></a><span class="co">#tokens \&lt;- data_frame(text = fileText) %\&gt;% unnest_tokens(word, text)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb17-7"><a href="#cb17-7" aria-hidden="true" tabindex="-1"></a><span class="co"># read in the new file</span></span>
+<span id="cb17-8"><a href="#cb17-8" aria-hidden="true" tabindex="-1"></a>fileText <span class="ot">&lt;-</span> glue<span class="sc">::</span><span class="fu">glue</span>(<span class="fu">read_file</span>(fileName)) </span>
+<span id="cb17-9"><a href="#cb17-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-10"><a href="#cb17-10" aria-hidden="true" tabindex="-1"></a><span class="co"># remove any dollar signs (they're special characters in R)</span></span>
+<span id="cb17-11"><a href="#cb17-11" aria-hidden="true" tabindex="-1"></a>fileText <span class="ot">&lt;-</span> <span class="fu">gsub</span>(<span class="st">"</span><span class="sc">\\</span><span class="st">$"</span>, <span class="st">""</span>, fileText)</span>
+<span id="cb17-12"><a href="#cb17-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-13"><a href="#cb17-13" aria-hidden="true" tabindex="-1"></a><span class="co"># tokenize</span></span>
+<span id="cb17-14"><a href="#cb17-14" aria-hidden="true" tabindex="-1"></a>tokens <span class="ot">&lt;-</span> <span class="fu">data_frame</span>(<span class="at">text =</span> fileText) <span class="sc">|&gt;</span>  <span class="fu">unnest_tokens</span>(word, text)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>With this list of tokens, we can compare them against a list of words with either positive or negative sentiment.</p>
+<p>The tidytext package has several lists of sentiment lexicons including 1. Afinn: containing negative and positive words on a scale from -5 to 5 2. Bing: containing words coded as negative or positive sentiment 3. NRC: containing words representing the following wider range of sentiments: anger, anticipation, disgust, fear, joy… etc.</p>
+<p>We will be using Bing as part of this tutorial</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb18"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="co"># getting the sentiment from the first text:</span></span>
+<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a>tokens <span class="sc">|&gt;</span> </span>
+<span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">inner_join</span>(<span class="fu">get_sentiments</span>(<span class="st">"bing"</span>)) <span class="sc">|&gt;</span> </span>
+<span id="cb18-4"><a href="#cb18-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">count</span>(sentiment) <span class="sc">|&gt;</span> </span>
+<span id="cb18-5"><a href="#cb18-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">pivot_wider</span>(<span class="at">names_from =</span> sentiment, <span class="at">values_from=</span>n) <span class="sc">|&gt;</span> </span>
+<span id="cb18-6"><a href="#cb18-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">sentiment=</span>positive<span class="sc">-</span>negative)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 1 × 3
+  negative positive sentiment
+     &lt;int&gt;    &lt;int&gt;     &lt;int&gt;
+1       59       89        30</code></pre>
+</div>
+</div>
+<p>This output means that for the first text “Adams_1797”, there are 47 negative, and 102 positive polarity words. This means that there are 55 more positive than negative words.</p>
+<p>We can create a function to generate the number of words with each sentiment to run through all the txt files that we have.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb20"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a>GetSentiment<span class="ot">&lt;-</span> <span class="cf">function</span>(file){</span>
+<span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a>  <span class="co">#tokenise</span></span>
+<span id="cb20-3"><a href="#cb20-3" aria-hidden="true" tabindex="-1"></a>  fileName <span class="ot">&lt;-</span> <span class="fu">glue</span>(<span class="st">"data/"</span>, file, <span class="at">sep =</span> <span class="st">""</span>)</span>
+<span id="cb20-4"><a href="#cb20-4" aria-hidden="true" tabindex="-1"></a>  fileName <span class="ot">&lt;-</span> <span class="fu">trimws</span>(fileName)</span>
+<span id="cb20-5"><a href="#cb20-5" aria-hidden="true" tabindex="-1"></a>  fileText <span class="ot">&lt;-</span> <span class="fu">glue</span>(<span class="fu">read_file</span>(fileName))</span>
+<span id="cb20-6"><a href="#cb20-6" aria-hidden="true" tabindex="-1"></a>  fileText <span class="ot">&lt;-</span> <span class="fu">gsub</span>(<span class="st">"</span><span class="sc">\\</span><span class="st">$"</span>, <span class="st">""</span>, fileText)</span>
+<span id="cb20-7"><a href="#cb20-7" aria-hidden="true" tabindex="-1"></a>  tokens <span class="ot">&lt;-</span> <span class="fu">data_frame</span>(<span class="at">text =</span> fileText) <span class="sc">|&gt;</span>  <span class="fu">unnest_tokens</span>(word, text)</span>
+<span id="cb20-8"><a href="#cb20-8" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb20-9"><a href="#cb20-9" aria-hidden="true" tabindex="-1"></a>  <span class="co">#get sentiment</span></span>
+<span id="cb20-10"><a href="#cb20-10" aria-hidden="true" tabindex="-1"></a>  sentiment<span class="ot">&lt;-</span> tokens <span class="sc">|&gt;</span> </span>
+<span id="cb20-11"><a href="#cb20-11" aria-hidden="true" tabindex="-1"></a>    <span class="fu">inner_join</span>(<span class="fu">get_sentiments</span>(<span class="st">"bing"</span>)) <span class="sc">|&gt;</span></span>
+<span id="cb20-12"><a href="#cb20-12" aria-hidden="true" tabindex="-1"></a>    <span class="fu">count</span>(sentiment) <span class="sc">|&gt;</span> </span>
+<span id="cb20-13"><a href="#cb20-13" aria-hidden="true" tabindex="-1"></a>    <span class="fu">pivot_wider</span>(<span class="at">names_from =</span> sentiment, <span class="at">values_from=</span>n) <span class="sc">|&gt;</span> </span>
+<span id="cb20-14"><a href="#cb20-14" aria-hidden="true" tabindex="-1"></a>    <span class="fu">mutate</span>(<span class="at">sentiment=</span>positive<span class="sc">-</span>negative) <span class="sc">|&gt;</span></span>
+<span id="cb20-15"><a href="#cb20-15" aria-hidden="true" tabindex="-1"></a>    <span class="fu">mutate</span>(<span class="at">file=</span>file) <span class="sc">|&gt;</span> <span class="co">#add name of file</span></span>
+<span id="cb20-16"><a href="#cb20-16" aria-hidden="true" tabindex="-1"></a>    <span class="fu">mutate</span>(<span class="at">year =</span> <span class="fu">as.numeric</span>(<span class="fu">str_match</span>(file, <span class="st">"</span><span class="sc">\\</span><span class="st">d{4}"</span>))) <span class="sc">|&gt;</span> </span>
+<span id="cb20-17"><a href="#cb20-17" aria-hidden="true" tabindex="-1"></a>    <span class="fu">mutate</span>(<span class="at">president =</span> <span class="fu">str_match</span>(file, <span class="st">"(.*?)_"</span>)[<span class="dv">2</span>]) <span class="co">#add president</span></span>
+<span id="cb20-18"><a href="#cb20-18" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb20-19"><a href="#cb20-19" aria-hidden="true" tabindex="-1"></a>  <span class="fu">return</span>(sentiment)</span>
+<span id="cb20-20"><a href="#cb20-20" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb20-21"><a href="#cb20-21" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-22"><a href="#cb20-22" aria-hidden="true" tabindex="-1"></a><span class="fu">GetSentiment</span>(files[<span class="dv">1</span>])</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 1 × 6
+  negative positive sentiment file            year president
+     &lt;int&gt;    &lt;int&gt;     &lt;int&gt; &lt;chr&gt;          &lt;dbl&gt; &lt;chr&gt;    
+1       59       89        30 Adams_1797.txt  1797 Adams    </code></pre>
+</div>
+</div>
+<p>We can create a loop that runs this function through all our txt files:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb22"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a>sentiments<span class="ot">&lt;-</span> <span class="fu">data_frame</span>() <span class="co"># initialisig an empty data frame first</span></span>
+<span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-3"><a href="#cb22-3" aria-hidden="true" tabindex="-1"></a><span class="co">#creating a loop to populate the empty data frame</span></span>
+<span id="cb22-4"><a href="#cb22-4" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span>(i <span class="cf">in</span> files){</span>
+<span id="cb22-5"><a href="#cb22-5" aria-hidden="true" tabindex="-1"></a>    sentiments <span class="ot">&lt;-</span> <span class="fu">rbind</span>(sentiments, <span class="fu">GetSentiment</span>(i))</span>
+<span id="cb22-6"><a href="#cb22-6" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb22-7"><a href="#cb22-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-8"><a href="#cb22-8" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(sentiments)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>    negative        positive        sentiment         file          
+ Min.   : 20.0   Min.   :  57.0   Min.   : -7.0   Length:227        
+ 1st Qu.:101.0   1st Qu.: 180.0   1st Qu.: 76.5   Class :character  
+ Median :138.0   Median : 281.0   Median :128.0   Mode  :character  
+ Mean   :177.3   Mean   : 320.7   Mean   :143.3                     
+ 3rd Qu.:209.5   3rd Qu.: 384.5   3rd Qu.:183.5                     
+ Max.   :820.0   Max.   :1458.0   Max.   :763.0                     
+      year       president        
+ Min.   :1791   Length:227        
+ 1st Qu.:1848   Class :character  
+ Median :1904   Mode  :character  
+ Mean   :1904                     
+ 3rd Qu.:1962                     
+ Max.   :2018                     </code></pre>
+</div>
+</div>
+<p>Because there are some surnames that are commone, we manually edit them below:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb24"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a><span class="co"># disambiguate Bush Sr. and George W. Bush </span></span>
+<span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a><span class="co"># correct president in applicable rows</span></span>
+<span id="cb24-3"><a href="#cb24-3" aria-hidden="true" tabindex="-1"></a>bushSr <span class="ot">&lt;-</span> sentiments <span class="sc">%&gt;%</span> </span>
+<span id="cb24-4"><a href="#cb24-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(president <span class="sc">==</span> <span class="st">"Bush"</span>) <span class="sc">%&gt;%</span> <span class="co"># get rows where the president is named "Bush"...</span></span>
+<span id="cb24-5"><a href="#cb24-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(year <span class="sc">&lt;</span> <span class="dv">2000</span>) <span class="sc">%&gt;%</span> <span class="co"># ...and the year is before 200</span></span>
+<span id="cb24-6"><a href="#cb24-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">president =</span> <span class="st">"Bush Sr."</span>) <span class="co"># and change "Bush" to "Bush Sr."</span></span>
+<span id="cb24-7"><a href="#cb24-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb24-8"><a href="#cb24-8" aria-hidden="true" tabindex="-1"></a><span class="co"># remove incorrect rows</span></span>
+<span id="cb24-9"><a href="#cb24-9" aria-hidden="true" tabindex="-1"></a>sentiments <span class="ot">&lt;-</span> <span class="fu">anti_join</span>(sentiments, sentiments[sentiments<span class="sc">$</span>president <span class="sc">==</span> <span class="st">"Bush"</span> <span class="sc">&amp;</span> sentiments<span class="sc">$</span>year <span class="sc">&lt;</span> <span class="dv">2000</span>, ])</span>
+<span id="cb24-10"><a href="#cb24-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb24-11"><a href="#cb24-11" aria-hidden="true" tabindex="-1"></a><span class="co"># add corrected rows to data_frame </span></span>
+<span id="cb24-12"><a href="#cb24-12" aria-hidden="true" tabindex="-1"></a>sentiments <span class="ot">&lt;-</span> <span class="fu">full_join</span>(sentiments, bushSr)</span>
+<span id="cb24-13"><a href="#cb24-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb24-14"><a href="#cb24-14" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(sentiments)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>    negative        positive        sentiment         file          
+ Min.   : 20.0   Min.   :  57.0   Min.   : -7.0   Length:227        
+ 1st Qu.:101.0   1st Qu.: 180.0   1st Qu.: 76.5   Class :character  
+ Median :138.0   Median : 281.0   Median :128.0   Mode  :character  
+ Mean   :177.3   Mean   : 320.7   Mean   :143.3                     
+ 3rd Qu.:209.5   3rd Qu.: 384.5   3rd Qu.:183.5                     
+ Max.   :820.0   Max.   :1458.0   Max.   :763.0                     
+      year       president        
+ Min.   :1791   Length:227        
+ 1st Qu.:1848   Class :character  
+ Median :1904   Mode  :character  
+ Mean   :1904                     
+ 3rd Qu.:1962                     
+ Max.   :2018                     </code></pre>
+</div>
+</div>
+</section>
+<section id="data-visualisation-and-analysis" class="level2" data-number="3.3">
+<h2 data-number="3.3" class="anchored" data-anchor-id="data-visualisation-and-analysis"><span class="header-section-number">3.3</span> Data visualisation and analysis</h2>
+<p>With our data prepared, we can now visualise trends in the changes of sentiments over time. We may be interested in how speech sentiments have varied in the last 30 years</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb26"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(<span class="fu">filter</span>(sentiments, year<span class="sc">&gt;</span><span class="dv">1990</span>), <span class="fu">aes</span>(<span class="at">x=</span><span class="fu">as.numeric</span>(year), <span class="at">y=</span>sentiment))<span class="sc">+</span></span>
+<span id="cb26-2"><a href="#cb26-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="fu">aes</span>(<span class="at">color=</span>president))<span class="sc">+</span></span>
+<span id="cb26-3"><a href="#cb26-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_smooth</span>(<span class="at">method=</span><span class="st">"auto"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="Intro-to-text-analytics_files/figure-html/unnamed-chunk-15-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+<p>We can further segment the sentiment data based on the president.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb27"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(<span class="fu">filter</span>(sentiments, year<span class="sc">&gt;</span><span class="dv">1990</span>), <span class="fu">aes</span>(<span class="at">x =</span> president, <span class="at">y =</span> sentiment, <span class="at">color =</span> president)) <span class="sc">+</span> </span>
+<span id="cb27-2"><a href="#cb27-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_boxplot</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="Intro-to-text-analytics_files/figure-html/unnamed-chunk-16-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+<p>We can further investigate if there is a significant difference in sentiments from Republican and Democratic presidents. To do this, we can create 2 dataframes, capturing sentiments from Republican and Democratic presidents respectively. From this <a href="https://www.theguardian.com/news/datablog/2012/oct/15/us-presidents-listed#data">website</a>, we can download data on the president, year and party of each president.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb28"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a>partydata<span class="ot">&lt;-</span> <span class="fu">read.csv</span>(<span class="st">"US presidents listed - ALL NAMES.csv"</span>)</span>
+<span id="cb28-2"><a href="#cb28-2" aria-hidden="true" tabindex="-1"></a>partydata<span class="ot">&lt;-</span> partydata <span class="sc">|&gt;</span> </span>
+<span id="cb28-3"><a href="#cb28-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">rename</span>(<span class="at">year=</span>Years..after.inauguration.) <span class="sc">|&gt;</span> </span>
+<span id="cb28-4"><a href="#cb28-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(year, Party)</span>
+<span id="cb28-5"><a href="#cb28-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb28-6"><a href="#cb28-6" aria-hidden="true" tabindex="-1"></a>sentiments.party<span class="ot">&lt;-</span>sentiments <span class="sc">|&gt;</span> </span>
+<span id="cb28-7"><a href="#cb28-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">inner_join</span>(partydata, <span class="at">by=</span><span class="st">"year"</span>)</span>
+<span id="cb28-8"><a href="#cb28-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb28-9"><a href="#cb28-9" aria-hidden="true" tabindex="-1"></a>democrat<span class="ot">&lt;-</span>sentiments.party <span class="sc">|&gt;</span> </span>
+<span id="cb28-10"><a href="#cb28-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(Party<span class="sc">==</span><span class="st">"Democrat"</span>)</span>
+<span id="cb28-11"><a href="#cb28-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb28-12"><a href="#cb28-12" aria-hidden="true" tabindex="-1"></a>republican<span class="ot">&lt;-</span>sentiments.party <span class="sc">|&gt;</span> </span>
+<span id="cb28-13"><a href="#cb28-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(Party<span class="sc">==</span><span class="st">"Republican"</span>)</span>
+<span id="cb28-14"><a href="#cb28-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb28-15"><a href="#cb28-15" aria-hidden="true" tabindex="-1"></a><span class="co">#conduct t-test</span></span>
+<span id="cb28-16"><a href="#cb28-16" aria-hidden="true" tabindex="-1"></a><span class="fu">t.test</span>(democrat<span class="sc">$</span>sentiment, republican<span class="sc">$</span>sentiment)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+    Welch Two Sample t-test
+
+data:  democrat$sentiment and republican$sentiment
+t = -1.8834, df = 160.74, p-value = 0.06146
+alternative hypothesis: true difference in means is not equal to 0
+95 percent confidence interval:
+ -60.095494   1.424815
+sample estimates:
+mean of x mean of y 
+ 142.6310  171.9663 </code></pre>
+</div>
+</div>
+<p>From our t-test result, we see that while sample mean of democrats (142.6310) and republican (171.9663) may be different, there is insufficient evidence at the 0.05 level of confidence to conclude that there is a statistical significant difference in the sentiments from both groups. At the same time, given that the 95% confidence interval includes zero, it further supports the argument that there is no significant statistical difference.</p>
+<p>However, we can still visualise the difference in terms of sample means and variance using a box plot below.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb30"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(<span class="fu">filter</span>(sentiments.party, Party<span class="sc">==</span><span class="st">"Democrat"</span><span class="sc">|</span>Party<span class="sc">==</span><span class="st">"Republican"</span>), <span class="fu">aes</span>(<span class="at">x =</span> Party, <span class="at">y =</span> sentiment, <span class="at">color =</span> Party)) <span class="sc">+</span> <span class="fu">geom_boxplot</span>() <span class="sc">+</span> <span class="fu">geom_point</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="Intro-to-text-analytics_files/figure-html/unnamed-chunk-18-1.png" class="img-fluid" width="672"></p>
+</div>
 </div>
 
 
+</section>
 </section>
 
 </main> <!-- /main -->
